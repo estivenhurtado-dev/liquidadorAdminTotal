@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="repCartaCesion" pageWidth="595" pageHeight="842" columnWidth="510" leftMargin="85" rightMargin="0" topMargin="73" bottomMargin="72" uuid="ad618056-183d-4e18-9501-e77821f3e87b">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="338"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="NUMERO_APROBACION" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+initcap(ET.NOMBRE_ENTIDAD_TERRITORIAL) AS CIUDAD,
+     TRIM(CC.CODIGO_CLIENTE) AS CODIGO_CLIENTE,
+     TRIM(trunc(CC.NUMERO_CREDITO)) AS NUMERO_CREDITO,
+     TRIM(CC.NOMBRE1_CLIENTE)
+     ||' '||TRIM(CC.NOMBRE2_CLIENTE)
+     ||' '||TRIM(CC.APELLIDO1_CLIENTE)
+     ||' '||TRIM(CC.APELLIDO2_CLIENTE)  AS NOMBRE1_CLIENTE,
+     trunc(CC.CEDULA_CLIENTE) AS CEDULA_CLIENTE,
+     trim(CC.DIREECION_CLIENTE) AS DIREECION_CLIENTE,
+     CC.TELEFONO1_CLIENTE AS TELEFONO1_CLIENTE,
+     TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') AS FECHA_AUTORIZACION,
+     TO_CHAR(TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY'),'DD') AS DIA_AUTORIZACION,
+     TO_CHAR(TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY'),'YYYY') AS ANIO_AUTORIZACION,
+(
+  CASE
+  WHEN EXTRACT(MONTH  FROM TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') )=1 THEN 'Enero'
+  WHEN EXTRACT(MONTH  FROM TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') )=2 THEN 'Febrero'
+  WHEN EXTRACT(MONTH  FROM TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') )=3 THEN 'Marzo'
+  WHEN EXTRACT(MONTH  FROM TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') )=4 THEN 'Abril'
+  WHEN EXTRACT(MONTH  FROM TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') )=5 THEN 'Mayo'
+  WHEN EXTRACT(MONTH  FROM TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') )=6 THEN 'Junio'
+  WHEN EXTRACT(MONTH  FROM TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') )=7 THEN 'Julio'
+  WHEN EXTRACT(MONTH  FROM TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') )=8 THEN 'Agosto'
+  WHEN EXTRACT(MONTH  FROM TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') )=9 THEN 'Septiembre'
+  WHEN EXTRACT(MONTH  FROM TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') )=10 THEN 'Octubre'
+  WHEN EXTRACT(MONTH  FROM TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') )=11 THEN 'Noviembre'
+  WHEN EXTRACT(MONTH  FROM TO_DATE(BV.FECHA_HORA_TRANSACCION,'DD/MM/YY') )=12 THEN 'Diciembre'
+
+  END
+) as MES_AUTORIZACION,
+(
+  CASE
+  WHEN EXTRACT(MONTH  FROM SYSDATE )=1 THEN 'Enero'
+  WHEN EXTRACT(MONTH  FROM SYSDATE )=2 THEN 'Febrero'
+  WHEN EXTRACT(MONTH  FROM SYSDATE )=3 THEN 'Marzo'
+  WHEN EXTRACT(MONTH  FROM SYSDATE )=4 THEN 'Abril'
+  WHEN EXTRACT(MONTH  FROM SYSDATE )=5 THEN 'Mayo'
+  WHEN EXTRACT(MONTH  FROM SYSDATE )=6 THEN 'Junio'
+  WHEN EXTRACT(MONTH  FROM SYSDATE )=7 THEN 'Julio'
+  WHEN EXTRACT(MONTH  FROM SYSDATE )=8 THEN 'Agosto'
+  WHEN EXTRACT(MONTH  FROM SYSDATE )=9 THEN 'Septiembre'
+  WHEN EXTRACT(MONTH  FROM SYSDATE )=10 THEN 'Octubre'
+  WHEN EXTRACT(MONTH  FROM SYSDATE )=11 THEN 'Noviembre'
+  WHEN EXTRACT(MONTH  FROM SYSDATE )=12 THEN 'Diciembre'
+
+  END
+) as MES_ACTUAL,
+TO_CHAR(TO_DATE(SYSDATE,'DD/MM/YY'),'DD') AS DIA_ACTIAL,
+TO_CHAR(TO_DATE(SYSDATE,'DD/MM/YY'),'YYYY') AS ANIO_ACTUAL
+FROM
+
+NU_ENTIDADES_TERRITORIALES ET,
+NU_DIRECCIONES D,
+V_BASICOS_CLIENTE_CODEUDOR CC ,
+V_BASICOS_VOUCHER BV
+WHERE CC.CEDULA_CLIENTE=BV.CEDULA_CLIENTE
+AND CC.CODIGO_CLIENTE=D.CODIGO_CLIENTE
+AND D.PAIS=ET.PAIS
+AND D.MUNICIPIO=ET.MUNICIPIO
+AND D.DEPARTAMENTO=ET.DEPARTAMENTO
+AND CORRESPONDENCIA_CLIENTE='S'
+AND D.MUNICIPIO=ET.MUNICIPIO
+AND CC.NUMERO_CREDITO IS NOT NULL
+AND CC.NUMERO_CREDITO=BV.NUMERO_CREDITO
+AND D.DEPARTAMENTO=ET.DEPARTAMENTO
+AND trunc(BV.NUMERO_APROBACION)=$P{NUMERO_APROBACION}]]>
+	</queryString>
+	<field name="CIUDAD" class="java.lang.String"/>
+	<field name="CODIGO_CLIENTE" class="java.lang.String"/>
+	<field name="NUMERO_CREDITO" class="java.lang.String"/>
+	<field name="NOMBRE1_CLIENTE" class="java.lang.String"/>
+	<field name="CEDULA_CLIENTE" class="java.math.BigDecimal"/>
+	<field name="DIREECION_CLIENTE" class="java.lang.String"/>
+	<field name="TELEFONO1_CLIENTE" class="java.lang.String"/>
+	<field name="FECHA_AUTORIZACION" class="java.sql.Timestamp"/>
+	<field name="DIA_AUTORIZACION" class="java.lang.String"/>
+	<field name="ANIO_AUTORIZACION" class="java.lang.String"/>
+	<field name="MES_AUTORIZACION" class="java.lang.String"/>
+	<field name="MES_ACTUAL" class="java.lang.String"/>
+	<field name="DIA_ACTIAL" class="java.lang.String"/>
+	<field name="ANIO_ACTUAL" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="681" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="3cdef1ce-2632-43db-a400-2b998bd2dc51" key="staticText-1" x="0" y="81" width="308" height="28"/>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[FIDUCIARIA COLPATRIA S.A.
+Vocera del PATRIMONIO AUTÓNOMO FC – FENALCO VALLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3eb3a2bd-cf24-4714-a293-aa79b1a85a16" key="staticText-2" x="0" y="65" width="308" height="16"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Señores]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b99c6346-3495-4046-8964-5108996d5cb5" key="staticText-3" x="0" y="109" width="308" height="29"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Carrera 7 No. 24 – 89, Piso 21, Torre Colpatria
+Bogotá, D.C.
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="01342060-2f69-4247-9003-f29a7cde0894" key="staticText-4" x="0" y="163" width="48" height="75"/>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Ref.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b832f172-c127-49e3-b8d8-b6aec8c928e4" key="staticText-5" x="48" y="163" width="458" height="15"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Aceptación  de  la   Cesión  de  los  Derechos de Créditos y/o Sumas  de  Dinero]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="28e5e89e-2851-48b5-a332-e53ce936ab75" key="staticText-6" x="48" y="178" width="187" height="15"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[incorporados  en  el  Pagaré  número]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ffae2092-5d93-4af1-9318-e04326189a32" key="staticText-7" x="67" y="193" width="16" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[de]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="19321ab5-da27-455e-b4fd-5e03752384de" key="staticText-8" x="48" y="208" width="458" height="15"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[orden  de  FENALCO  VALLE   y  cedidos  por  éste  (a)  a  favor  del  Patrimonio]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="afe367d3-d214-4071-87c5-beb7aac4f665" key="textField" x="235" y="178" width="141" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUMERO_CREDITO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b659c3e4-662c-48e4-89a7-70c27e74e31c" key="staticText-9" x="376" y="178" width="78" height="15"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[ otorgado  el ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="42290320-1487-49c5-bac3-5b1f8751e2a8" key="staticText-10" x="151" y="193" width="18" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[de]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a85fc805-a502-4258-9884-1381af5c3cc2" key="staticText-11" x="205" y="193" width="28" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[por]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="b1eed418-7a94-4c43-9725-be296b8576b0" key="textField" x="169" y="193" width="36" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANIO_AUTORIZACION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="490be22e-644e-4a1a-8c49-96231511c23c" key="textField" x="233" y="193" width="188" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE1_CLIENTE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f4ae5409-966f-4da5-93fb-f750dcc87d43" key="staticText-12" x="421" y="193" width="35" height="15"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[a  la]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="60ecaa07-de71-4ddb-a85c-302da203a782" key="textField-1" x="48" y="193" width="19" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIA_AUTORIZACION}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="95cce43f-f436-408f-9443-e4030248c76f" key="staticText-13" x="48" y="223" width="381" height="15"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Autónomo FC – FENALCO VALLE.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3c3d30a1-c6dc-42bf-817e-a206d74688ab" key="staticText-14" x="0" y="258" width="442" height="72"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="11"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Respetados  Señores:
+
+Por  medio  del  presente  documento,  manifestamos  que  nos damos  por  notificados  y,  en consecuencia, aceptamos  la cesión  hecha por  FENALCO VALLE a favor del PATRIMONIO AUTÓNOMO FC – FENALCO VALLE, de  los Derechos de Crédito y/o ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="39f4a100-4027-4e17-a06d-6a03953c609c" key="staticText-15" x="0" y="328" width="256" height="14"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Sumas de Dinero incorporados en el Pagaré número]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="675d081c-201c-451d-9ae0-16fe9df3e51d" key="textField-2" x="256" y="328" width="121" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUMERO_CREDITO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2ad698d5-7f39-4194-a204-698d8fbf6d00" key="staticText-16" x="377" y="328" width="65" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[que   el   dia]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="d9c735ef-b240-40f6-ba18-c384488c4ca5" key="textField-3" x="0" y="342" width="25" height="14"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIA_AUTORIZACION}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e0111a87-67b9-46fd-bca8-3ef0aec85d5d" key="staticText-17" x="25" y="342" width="16" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[de]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ced3538f-4212-4c1a-b4c0-c628ad805591" key="staticText-18" x="104" y="342" width="18" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[de]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="4088789f-b92b-445e-91a8-0f8ba6230741" key="textField-5" x="122" y="342" width="38" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANIO_AUTORIZACION}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="fb40504a-f754-44ee-b922-735de885bb2d" key="staticText-19" x="160" y="342" width="282" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[(en adelante el PAGARÉ), otorgamos a la orden de]]></text>
+			</staticText>
+			<textField pattern="MMMMM" isBlankWhenNull="false">
+				<reportElement uuid="538f79a8-5008-4ff0-8d9f-d96bd9703f85" key="textField-6" x="83" y="193" width="68" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MES_AUTORIZACION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM" isBlankWhenNull="false">
+				<reportElement uuid="5185546a-8fd9-4f04-b2fb-067b79d55a59" key="textField-7" x="41" y="342" width="63" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MES_ACTUAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="59d8dbb3-2bdd-4c0c-9009-f46f7222ca07" key="staticText-20" x="0" y="356" width="434" height="14"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[FENALCO VALLE y que éste (a) cedió a favor del mencionado Patrimonio Autónomo.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0d65e93d-8cf6-482e-bd4a-fc33e3aa4e31" key="staticText-21" x="0" y="383" width="443" height="158"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[En atención a lo anterior, todas las sumas de dinero que con ocasión del PAGARÉ debíamos pagar a FENALCO VALLE, serán pagadas a favor del PATRIMONIO AUTÓNOMO FC – FENALCO VALLE, quien además es su legítimo tenedor, mediante el depósito en la cuenta corriente No. 0501003654 del Banco Colpatria y la cuenta corriente No. 484-02467-4 del Banco de Bogotá, de las cuales es titular dicho Patrimonio Autónomo.
+
+De igual forma, manifestamos que  conocemos y aceptamos que para efectuar pagos o consignaciones en forma diferente a la aquí indicada, se requerirá autorización escrita en tal sentido, suscrita por el Representante Legal de Fiduciaria Colpatria S.A. en su condición de vocera y administradora del PATRIMONIO AUTÓNOMO FC – FENALCO VALLE.
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a589b577-b316-4473-8489-6b5299c16f97" key="staticText-22" x="0" y="639" width="20" height="14"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[CC.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d259736f-21d6-47c5-a7d1-c533f98e8170" key="staticText-23" x="0" y="653" width="49" height="14"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Direccion:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="96ede8e7-cfc7-4f44-bd6f-59c34ec8141c" key="staticText-24" x="0" y="666" width="49" height="14"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Telefono:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0566860b-8f8b-4faa-be9b-df271eb668d5" key="staticText-26" x="0" y="568" width="152" height="14"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Atentamente,]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="c8176804-c784-4e56-a780-792e2e274491" key="textField-8" x="0" y="624" width="152" height="15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE1_CLIENTE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="0ab707c2-f3b9-4294-b8c5-cb937c0613c5" key="textField" x="51" y="653" width="372" height="14"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIREECION_CLIENTE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="9c6341c1-f64e-4cba-a679-080369579e83" key="textField" x="49" y="666" width="372" height="14"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TELEFONO1_CLIENTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#" isBlankWhenNull="false">
+				<reportElement uuid="83d844ad-3318-4948-8f07-4bc94845cdf3" key="textField" x="20" y="639" width="132" height="14"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CEDULA_CLIENTE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="67d97a2a-1f11-477b-970b-2680ac971930" key="textField-9" x="68" y="0" width="19" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIA_ACTIAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="7da411ae-97e0-4a74-807b-39e4ff91448f" key="staticText-27" x="87" y="0" width="16" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[de]]></text>
+			</staticText>
+			<textField pattern="MMMMM" isBlankWhenNull="false">
+				<reportElement uuid="578cfaf8-f4ca-4e5b-9117-772fa561531c" key="textField-10" x="103" y="0" width="68" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MES_ACTUAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="eff7ae88-e621-4dbf-817f-be39b4cd7f3b" key="staticText-28" x="171" y="0" width="18" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[de]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="c6cb4845-1797-41e3-8b59-ff94bb95f354" key="textField-11" x="189" y="0" width="36" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANIO_ACTUAL}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="567960d8-b1d4-4818-9ef8-aa2cfb2d81d0" key="textField" x="0" y="0" width="68" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CIUDAD}+","]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

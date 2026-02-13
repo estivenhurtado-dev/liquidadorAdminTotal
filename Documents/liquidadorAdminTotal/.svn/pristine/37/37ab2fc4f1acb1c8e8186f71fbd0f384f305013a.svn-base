@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<h:outputStylesheet library="css" name="default.css" />
+	<h:outputScript library="js" name="validaciones2.js" />
+
+
+
+
+
+
+
+</h:head>
+<h:body>
+	<h:form id="form1">
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+			closable="false" resizable="false" showHeader="false">
+			<p:graphicImage library="images" name="ajax-loader.gif" />
+		</p:dialog>
+
+
+
+		<div align="center">
+
+			<p:growl id="messages1" sticky="true" />
+			<p:panel style="width: 1000px;"
+				header="#{MBLiquidacionPre.nombreApp}" id="formularioingreso">
+
+				<h:panelGrid id="consul" columns="2" cellpadding="4">
+					<h:outputText style="background-color: none; " value="Afiliado :" />
+					<h:outputText style="background-color: none; width: 350px;"
+						value="#{MBLiquidacionPre.afiliadoConsultado.nombre}" />
+					<h:outputText style="background-color: none; " value="Código  :" />
+					<h:outputText style="background-color: none; width: 350px;"
+						value="#{MBLiquidacionPre.codigoAfiliado}" />
+					<h:outputText style="background-color: none; color:Red "
+						value="Tasa de Interes MV(%):" />
+					<h:outputText style="background-color: none;  color:Red "
+						value="#{MBLiquidacionPre.tempPagareTasaInteres.valor}" />
+
+					<h:outputText style="background-color: none; "
+						value="Tipo Solicitante: "
+						rendered="#{MBLiquidacionPre.codigoBarras}" />
+					<p:selectOneMenu id="tipoSolicitanteOneMenu"
+						value="#{MBLiquidacionPre.tipoLiquidacionSeleccionado}"
+						style="width: 350px;" rendered="#{MBLiquidacionPre.codigoBarras}">
+						<p:ajax listener="#{MBLiquidacionPre.procesarCodigoBarras}"
+						/>
+						<f:selectItem itemLabel="Seleccione la liquidación:" itemValue="" />
+						<f:selectItem itemLabel="Liquidación 1" itemValue="liqui1" />
+						<f:selectItem itemLabel="Liquidación 2" itemValue="liqui2" />
+					</p:selectOneMenu>
+					<h:outputText style="background-color: none; "
+						value="Código de barras:"
+						rendered="#{MBLiquidacionPre.codigoBarras}" />
+					<p:inputText style="width: 350px;" id="datocBar" maxlength="54"
+						rendered="#{MBLiquidacionPre.codigoBarras}"
+						value="#{MBLiquidacionPre.textoCodigoBarras}">
+						<p:ajax event="blur" update="dato5,dato7,messages1"
+							listener="#{MBLiquidacionPre.procesarCodigoBarras}" />
+					</p:inputText>
+
+					<h:outputText style="background-color: none; "
+						value="Fecha Liquidación (dd/mm/aaaa):" rendered="false" />
+					<h:outputText style="background-color: none;  "
+						value="#{MBLiquidacionPre.fecha}" rendered="false" />
+
+
+					<h:outputText style="background-color: none;"
+						value="Fecha Primera Cuota (dd/mm/aaaa):" rendered="false" />
+					<h:outputText style="background-color: none; "
+						value="#{MBLiquidacionPre.fechaPrimeraCuota}" rendered="false" />
+
+
+
+
+
+
+					<h:outputText style="background-color: none; "
+						value="Cedula / Cód Estud.:" />
+
+					<p:inputText style="width: 350px;" id="dato1" maxlength="20"
+						onkeyup="numberFormat(stripNonNumeric(this),this,false);"
+						value="#{MBLiquidacionPre.cedulaGirador}">
+						<p:ajax event="blur" update="dato5,dato7,messages1"
+							listener="#{MBLiquidacionPre.procesarCodigoBarras}" />
+					</p:inputText>
+
+					<h:outputText style="background-color: none; " value="Nombre :" />
+					<p:inputText style="width: 350px;" id="dato2" maxlength="60"
+						value="#{MBLiquidacionPre.nombre}"
+						onkeyup="value=value.toUpperCase()">
+					</p:inputText>
+
+
+					<h:outputText style="background-color: none; " value="Semestre:" />
+					<p:inputText style="width: 350px;" id="dato3" maxlength="50"
+						value="#{MBLiquidacionPre.semestre}"
+						onkeyup="value=value.toUpperCase()">
+					</p:inputText>
+
+					<h:outputText style="background-color: none; " value="Programa:	" />
+					<p:inputText style="width: 350px;" id="dato4" maxlength="50"
+						value="#{MBLiquidacionPre.programa}"
+						onkeyup="value=value.toUpperCase()">
+					</p:inputText>
+
+					<h:outputText style="background-color: none; " value="Referencia:" />
+					<p:inputText style="width: 350px;" id="dato5" maxlength="50"
+						value="#{MBLiquidacionPre.referencia}"
+						onkeyup="value=value.toUpperCase()">
+						<p:ajax event="blur" 
+							listener="#{MBLiquidacionPre.procesarCodigoBarras}" />
+					</p:inputText>
+
+					<h:outputText style="background-color: none; " value="Periodo:" />
+					<p:inputText style="width: 350px;" id="dato6" maxlength="50"
+						value="#{MBLiquidacionPre.periodo}"
+						onkeyup="value=value.toUpperCase()">
+					</p:inputText>
+					<h:outputText style="background-color: none; "
+						value="Fecha Liquidación (dd/mm/aaaa):" />
+					<h:outputText style="background-color: none;  "
+						value="#{MBLiquidacionPre.fecha}" />
+
+					<h:outputText style="background-color: none; "
+						value="Valor a Financiar: " />
+					<p:inputText style="width: 350px;" id="dato7" maxlength="20"
+						onkeyup="numberFormat(stripNonNumeric(this),this,false);"
+						value="#{MBLiquidacionPre.valorLiquidar}">
+
+						<p:ajax event="blur" 
+							listener="#{MBLiquidacionPre.procesarCodigoBarras}" />
+					</p:inputText>
+
+					<h:outputText style="background-color: none; "
+						value="Plazo (meses):" />
+					<p:inputText style="width: 350px;" id="dato8" maxlength="2"
+						onkeyup="numberFormat(stripNonNumeric(this),this,false);"
+						value="#{MBLiquidacionPre.plazoMeses}">
+
+					</p:inputText>
+
+
+
+
+
+				</h:panelGrid>
+
+
+
+				<h:panelGrid id="botones" columns="3" cellpadding="4">
+					<p:commandButton value="Liquidar" update="messages1,dato9"
+						onstart="PF('statusDialog').show();  "
+						oncomplete="PF('statusDialog').hide();" style="width: 180px;"
+						action="#{MBLiquidacionPre.liquidar}" styleClass="btn btn-green"
+						id="Liquidar">
+					</p:commandButton>
+					<p:commandButton value="Limpiar" update="formularioingreso"
+						style="width: 180px;" action="#{MBLiquidacionPre.limpiar}"
+						styleClass="btn btn-green" id="Limpiar">
+					</p:commandButton>
+					<p:commandButton value="Atras" update="formularioingreso,messages1"
+						style="width: 180px;" action="#{MBLiquidacionPre.regresar}"
+						styleClass="btn btn-blue" id="Volver">
+					</p:commandButton>
+
+				</h:panelGrid>
+
+				<h:panelGrid id="pie" columns="2" cellpadding="4">
+					<h:outputText style="background-color: none; width: 270px; "
+						value="Valor Cuota: " />
+					<p:inputText style="width: 350px;" id="dato9" maxlength="2"
+						readonly="true"
+						onkeyup="numberFormat(stripNonNumeric(this),this,false);"
+						value="#{MBLiquidacionPre.valorCuotaMostrar}">
+
+
+
+					</p:inputText>
+
+				</h:panelGrid>
+				<h:panelGrid id="pieBoton" columns="1" cellpadding="4">
+					<p:commandButton value="Archivo Detallado" style="width: 180px;"
+						ajax="false"
+						action="#{MBLiquidacionPre.generarReportePreliquidacion}"
+						styleClass="btn btn-green" id="ArchivoDetallado">
+					</p:commandButton>
+					<p:commandButton value="Aprobación"
+						update="formularioingreso,messages1" style="width: 180px;"
+						action="#{MBLiquidacionPre.navegarAprobacion}"
+						styleClass="btn btn-green" id="Aprobación">
+					</p:commandButton>
+
+				</h:panelGrid>
+
+				<h:outputText value=" " />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			</p:panel>
+
+
+		</div>
+	</h:form>
+</h:body>
+</html>
+

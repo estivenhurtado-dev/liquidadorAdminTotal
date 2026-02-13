@@ -1,0 +1,907 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="REP_PAGARE_ENDS" pageWidth="697" pageHeight="1100" columnWidth="697" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="20" uuid="16d24081-fc89-4399-ab52-7b4681b10c59">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="0.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="NUMERO_CREDITO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["00000007004010021090865"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CEDULA_CLIENTE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["0000000010531025"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CEDULA_CLIENTE_MOSTRAR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="CEDULA_CODEUDOR_MOSTRAR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="NUMERO_CREDITO_MOSTRAR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="LOGO" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="NUMERO_AUTORIZACION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["313251"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ENDOSO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."CODIGO_CLIENTE") AS CODIGO_CLIENTE,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."NUMERO_CREDITO") AS NUMERO_CREDITO,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."NOMBRE1_CLIENTE") AS NOMBRE1_CLIENTE,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."NOMBRE2_CLIENTE") AS NOMBRE2_CLIENTE,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."APELLIDO1_CLIENTE") AS APELLIDO1_CLIENTE,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."APELLIDO2_CLIENTE") AS APELLIDO2_CLIENTE,
+     V_BASICOS_CLIENTE_CODEUDOR."CEDULA_CLIENTE" AS CEDULA_CLIENTE,
+     V_BASICOS_CLIENTE_CODEUDOR."DIREECION_CLIENTE" AS DIREECION_CLIENTE,
+     V_BASICOS_CLIENTE_CODEUDOR."TELEFONO1_CLIENTE" AS TELEFONO1_CLIENTE,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."NOMBRE1_CODEUDOR") AS NOMBRE1_CODEUDOR,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."NOMBRE2_CODEUDOR") AS NOMBRE2_CODEUDOR,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."APELLIDO1_CODEUDOR") AS APELLIDO1_CODEUDOR,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."APELLIDO2_CODEUDOR") AS APELLIDO2_CODEUDOR,
+     V_BASICOS_CLIENTE_CODEUDOR."CEDULA_CODEUDOR" AS CEDULA_CODEUDOR,
+     V_BASICOS_CLIENTE_CODEUDOR."DIRECCION_CODEUDOR" AS DIRECCION_CODEUDOR,
+     V_BASICOS_CLIENTE_CODEUDOR."TELEFONO1_CODEUDOR" AS TELEFONO1_CODEUDOR,
+T.GRUPO_AFINIDAD,
+TO_DATE(V.FECHA_HORA_TRANSACCION,'DD/MM/YY') AS FECHA_COMPRA
+FROM
+     "OPENCARD"."V_BASICOS_CLIENTE_CODEUDOR" V_BASICOS_CLIENTE_CODEUDOR , NU_TARJETAS T, V_BASICOS_VOUCHER V
+WHERE
+V_BASICOS_CLIENTE_CODEUDOR."NUMERO_CREDITO"=T.NUMERO_TARJETA
+AND
+	V_BASICOS_CLIENTE_CODEUDOR."NUMERO_CREDITO" = $P{NUMERO_CREDITO}
+AND
+V_BASICOS_CLIENTE_CODEUDOR."NUMERO_CREDITO"=V.NUMERO_CREDITO
+AND to_number(v.numero_aprobacion)=TO_NUMBER($P{NUMERO_AUTORIZACION})
+
+AND
+	V_BASICOS_CLIENTE_CODEUDOR."CEDULA_CLIENTE" = $P{CEDULA_CLIENTE}]]>
+	</queryString>
+	<field name="CODIGO_CLIENTE" class="java.lang.String"/>
+	<field name="NUMERO_CREDITO" class="java.lang.String"/>
+	<field name="NOMBRE1_CLIENTE" class="java.lang.String"/>
+	<field name="NOMBRE2_CLIENTE" class="java.lang.String"/>
+	<field name="APELLIDO1_CLIENTE" class="java.lang.String"/>
+	<field name="APELLIDO2_CLIENTE" class="java.lang.String"/>
+	<field name="CEDULA_CLIENTE" class="java.lang.String"/>
+	<field name="DIREECION_CLIENTE" class="java.lang.String"/>
+	<field name="TELEFONO1_CLIENTE" class="java.lang.String"/>
+	<field name="NOMBRE1_CODEUDOR" class="java.lang.String"/>
+	<field name="NOMBRE2_CODEUDOR" class="java.lang.String"/>
+	<field name="APELLIDO1_CODEUDOR" class="java.lang.String"/>
+	<field name="APELLIDO2_CODEUDOR" class="java.lang.String"/>
+	<field name="CEDULA_CODEUDOR" class="java.lang.String"/>
+	<field name="DIRECCION_CODEUDOR" class="java.lang.String"/>
+	<field name="TELEFONO1_CODEUDOR" class="java.lang.String"/>
+	<field name="GRUPO_AFINIDAD" class="java.math.BigDecimal"/>
+	<field name="FECHA_COMPRA" class="java.sql.Timestamp"/>
+	<group name="GRUPO1" isStartNewColumn="true" isStartNewPage="true" isResetPageNumber="true">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="309" splitType="Prevent">
+				<rectangle radius="3">
+					<reportElement uuid="d3ac62f6-5a45-48bc-9cf0-d374edaf5c48" key="rectangle-5" x="5" y="2" width="253" height="92" forecolor="#CCCCCC"/>
+					<graphicElement>
+						<pen lineWidth="1.0" lineStyle="Dashed"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle radius="0">
+					<reportElement uuid="b9a73747-f74b-4d40-abdd-d5a7eccb2f71" key="rectangle-1" mode="Opaque" x="15" y="111" width="668" height="24" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement uuid="05d1695f-4c9b-412b-b049-7329ec8f40c6" key="staticText-28" mode="Transparent" x="15" y="68" width="197" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[DEUDOR]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="904c4159-2c71-48d7-ba8c-882bb88fd4b6" key="line-1" mode="Opaque" x="10" y="61" width="237" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<rectangle radius="0">
+					<reportElement uuid="c1952a4f-e34a-40dd-b1ae-a09aedb9e5fb" key="rectangle-2" mode="Opaque" x="264" y="2" width="78" height="75" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement uuid="07e09712-d095-4904-bbf3-550458a2e532" key="staticText-29" mode="Transparent" x="281" y="82" width="45" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[HUELLA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="efaf4212-96f2-4dfb-8f47-b52841acd78e" key="staticText-30" mode="Transparent" x="15" y="96" width="67" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[DEUDOR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="80b63847-ff83-44ff-a9af-cfb22b68ef61" key="staticText-31" mode="Transparent" x="20" y="111" width="180" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Nombre Completo:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="5cdd53a0-3b91-489c-a37e-84147ca1fd8e" key="staticText-32" mode="Transparent" x="342" y="111" width="58" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Dirección]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d0f687b0-5668-437c-8e02-8cbdc07785e2" key="staticText-34" mode="Transparent" x="532" y="111" width="58" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Teléfono]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="38f50e49-d9d4-482a-86bf-1d6f829d6de1" key="line-2" mode="Opaque" x="337" y="111" width="1" height="24" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement uuid="1ce4749a-f306-49f2-be6e-34badd8a3cf9" key="line-3" mode="Opaque" x="15" y="135" width="668" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement uuid="cbf65a38-6917-4717-85d2-adbe4754dea2" key="staticText-35" mode="Transparent" x="353" y="67" width="237" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[CODEUDOR]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="ffdd0e85-3744-4a45-af4d-1b1e0be70412" key="line-4" mode="Opaque" x="348" y="60" width="242" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<rectangle radius="0">
+					<reportElement uuid="72c2278d-5da1-43de-bffb-b63eb4d779c9" key="rectangle-3" mode="Opaque" x="606" y="2" width="78" height="75" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement uuid="67c7e4d7-459e-4047-920a-b0987fd52325" key="staticText-36" mode="Transparent" x="623" y="82" width="45" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[HUELLA]]></text>
+				</staticText>
+				<rectangle radius="0">
+					<reportElement uuid="5e75cc14-74d2-4ab3-a0d1-3e050d43e116" key="rectangle-4" mode="Opaque" x="15" y="148" width="668" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement uuid="df1cbfe5-b516-46e4-8a50-6e3e7cba4608" key="staticText-41" mode="Transparent" x="15" y="135" width="83" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[CODEUDOR]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="687fc9d4-34cb-4b8f-8b3f-ccb2774693f6" key="line-5" mode="Opaque" x="338" y="148" width="1" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement uuid="1b688a0b-6ed2-4b5a-a4c2-ddb5071d2f57" key="line-6" mode="Opaque" x="15" y="171" width="668" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="ca85ff78-52ed-4926-b7be-35a3b85f33d1" key="textField" mode="Transparent" x="20" y="123" width="313" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{NOMBRE1_CLIENTE}!=null ?$F{NOMBRE1_CLIENTE} : " " )+" "+
+( $F{NOMBRE2_CLIENTE}!=null ?$F{NOMBRE2_CLIENTE} : " " )+" "+
+( $F{APELLIDO1_CLIENTE}!=null ?$F{APELLIDO1_CLIENTE} : " " )+" "+
+( $F{APELLIDO2_CLIENTE}!=null ?$F{APELLIDO2_CLIENTE} : " " )]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement uuid="d25d70b3-4821-431f-b6c1-a47b9c406af7" key="textField" mode="Transparent" x="36" y="78" width="176" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{CEDULA_CLIENTE_MOSTRAR}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement uuid="32455e29-87bf-436e-bf89-3541ce76cb02" key="textField" mode="Transparent" x="20" y="160" width="313" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{NOMBRE1_CODEUDOR}!=null ?$F{NOMBRE1_CODEUDOR} : " " )+" "+
+( $F{NOMBRE2_CODEUDOR}!=null ?$F{NOMBRE2_CODEUDOR} : " " )+" "+
+( $F{APELLIDO1_CODEUDOR}!=null ?$F{APELLIDO1_CODEUDOR} : " " )+" "+
+( $F{APELLIDO2_CODEUDOR}!=null ?$F{APELLIDO2_CODEUDOR} : " " )]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement uuid="1014bff8-e74e-4aa5-9a0a-ac851afcf1f8" key="textField" mode="Transparent" x="374" y="77" width="215" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{CEDULA_CODEUDOR_MOSTRAR}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="ad491d9d-bf39-4647-b442-a28de3b6af40" key="staticText-45" mode="Transparent" x="533" y="148" width="58" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Teléfono]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="31ba644f-b677-4b6e-8a43-223f2761e400" key="staticText-46" mode="Transparent" x="20" y="148" width="181" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Nombre Completo:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="93ce28af-0fed-4637-8834-c07d56b81c96" key="staticText-47" mode="Transparent" x="345" y="148" width="58" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Dirección]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement uuid="3fdef0da-c225-4626-929c-2c879632dada" key="textField" mode="Transparent" x="342" y="123" width="177" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIREECION_CLIENTE}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement uuid="2f886003-d825-4bfb-b19f-86d5755859dd" key="textField" mode="Transparent" x="532" y="123" width="81" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TELEFONO1_CLIENTE}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement uuid="7e16a70f-8cf5-4eff-be77-0d223bd33251" key="textField" mode="Transparent" x="345" y="159" width="177" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DIRECCION_CODEUDOR}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement uuid="180f3b3b-6c79-4092-a0a0-83dc515e3765" key="textField" mode="Transparent" x="533" y="160" width="81" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TELEFONO1_CODEUDOR}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="04cafd8a-00ae-4af3-b5e1-e41261a3dfc5" key="staticText-51" mode="Transparent" x="15" y="78" width="97" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[C.C.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="1f6178a6-0356-4578-bb57-bfb0c90734a0" key="staticText-52" mode="Transparent" x="353" y="77" width="102" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[C.C.]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="6592a457-fcfc-4a27-8e4a-b1868796209d" key="line-10" mode="Opaque" x="527" y="111" width="1" height="24" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid"/>
+				</line>
+				<line>
+					<reportElement uuid="e88fe031-d2c0-4d48-b1bc-db837d75a7c1" key="line-11" mode="Opaque" x="527" y="149" width="1" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid"/>
+				</line>
+				<line>
+					<reportElement uuid="cd5734e2-d6f6-4d67-8f2a-716f71fed59a" key="line-16" mode="Opaque" x="18" y="271" width="203" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid"/>
+				</line>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="10b0db29-da08-479d-a8d1-d817470900ee" key="textField-2" x="18" y="175" width="203" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{GRUPO_AFINIDAD}.intValue()== 3 ?
+new String("FEDERACION NACIONAL DE COMERCIANTES") : ( $F{GRUPO_AFINIDAD}.intValue()== 2 ?
+new String("FENALCO Endosa en propiedad") : ( $F{GRUPO_AFINIDAD}.intValue()== 5 ?
+new String("FEDERACION NACIONAL DE COMERCIANTES") : new String("") )
+ )
+)]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="45e823fd-6238-4edf-8d6a-eef1a68952e2" key="textField-3" x="18" y="185" width="203" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{GRUPO_AFINIDAD}.intValue()== 3 ?
+new String("FENALCO SECCIONAL VALLE DEL CAUCA") : ( $F{GRUPO_AFINIDAD}.intValue()== 2 ?
+new String("Con responsabilidad a la") : ( $F{GRUPO_AFINIDAD}.intValue()== 5 ?
+new String("FENALCO SECCIONAL VALLE DEL CAUCA") : new String("") )  )
+
+)]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="ebb0add5-1b65-425a-9c3f-9fb98ee762dd" key="textField-4" x="18" y="195" width="203" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{GRUPO_AFINIDAD}.intValue()== 3 ?
+new String("NIT. 890.303.215-7 ENDOSA EN PROPIEDAD") : ( $F{GRUPO_AFINIDAD}.intValue()== 2 ?
+new String("Fiduciaria Corficolombiana S.A.") : ( $F{GRUPO_AFINIDAD}.intValue()==5 ?
+new String("NIT. 890.303.215-7 ENDOSA EN PROPIEDAD") : new String("") )  )
+
+)]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="db0a1ee4-da0a-464a-9cb6-d18b20322547" key="textField-5" x="18" y="205" width="203" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{GRUPO_AFINIDAD}.intValue()== 3 ?
+new String("Y CON RESPONSABILIDAD CAMBIARIA EL") : ( $F{GRUPO_AFINIDAD}.intValue()== 2 ?
+new String("Fideicomiso Fenalco") : ( $F{GRUPO_AFINIDAD}.intValue()== 5 ?
+new String("Y CON RESPONSABILIDAD CAMBIARIA EL") : new String("") )  )
+
+)]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="776cd887-45d0-4001-9c56-930bf5b939d5" key="textField-6" x="18" y="215" width="203" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{GRUPO_AFINIDAD}.intValue()== 3 ?
+new String("PRESENTE PAGARE A FAVOR DEL") : ( $F{GRUPO_AFINIDAD}.intValue()== 2 ?
+new String(" ") : ( $F{GRUPO_AFINIDAD}.intValue()== 5 ?
+new String("PRESENTE PAGARE A FAVOR DE") : new String("") )   )
+
+)]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="84ed894b-22ab-4960-a4be-1efc777ab0a5" key="textField-7" x="18" y="225" width="203" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{GRUPO_AFINIDAD}.intValue()== 3 ?
+new String("PATRIMONIO AUTONOMO FC FENALCO") : ( $F{GRUPO_AFINIDAD}.intValue()== 2 ?
+new String(" ") : ( $F{GRUPO_AFINIDAD}.intValue()== 5 ?
+new String("BANCOOMEVA S.A NIT. 900.406.150-5") : new String("") ) )
+)]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="002d8880-4925-43e0-8729-7f33155e533e" key="textField-8" x="18" y="235" width="203" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{GRUPO_AFINIDAD}.intValue()== 3 ?
+new String("VALLE CON NIT NIT. 830.053.944-4") :  ( $F{GRUPO_AFINIDAD}.intValue()== 2 ?
+new String(" ") : new String("") ) )]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="7ecff244-0916-46e2-81b1-db3aa7df0b41" key="textField-9" x="18" y="273" width="203" height="11"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{GRUPO_AFINIDAD}.intValue()== 3 || $F{GRUPO_AFINIDAD}.intValue()== 2 || $F{GRUPO_AFINIDAD}.intValue()== 5 ?
+new String("Gladys Barona Muñoz") : new String("")  )]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="d7e22782-9fa2-4e65-95d8-750115299e8e" key="textField-10" x="18" y="282" width="203" height="14"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{GRUPO_AFINIDAD}.intValue()== 3 || $F{GRUPO_AFINIDAD}.intValue()== 2 || $F{GRUPO_AFINIDAD}.intValue()== 5 ?
+new String("Representante Legal o Apoderado") : new String("")  )]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+					<reportElement uuid="b92196a7-d59e-4558-80da-a6ae8a27863e" key="textField" x="88" y="296" width="70" height="13"/>
+					<textElement textAlignment="Justified">
+						<font fontName="SansSerif" size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_COMPRA}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="GREUPO2" isStartNewPage="true">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="771" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="7dff9494-8b65-4cbb-94a8-008deab00459" key="staticText-1" mode="Transparent" x="4" y="25" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[PAGARE NRO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b1477a87-65d2-462c-bcbc-11a40846999c" key="staticText-6" mode="Transparent" x="4" y="68" width="42" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Deudor.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8bcf7332-3ee3-4788-a9bb-f09d2881637f" key="staticText-7" mode="Transparent" x="544" y="68" width="42" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[, C.C.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2c9f5cbf-dcfe-4c56-bc15-2d560001568d" key="staticText-13" mode="Transparent" x="3" y="55" width="58" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Nosotros]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d7fd348b-b902-4ed4-8e59-91b44081f93f" key="staticText-14" mode="Transparent" x="675" y="68" width="17" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[y/o]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bc53104b-95d0-44fd-86c7-a2b6398e06a0" key="staticText-15" mode="Transparent" x="4" y="81" width="57" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Codeudor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0786680e-dc07-4e9e-80ca-ba46b0c57073" key="staticText-16" mode="Transparent" x="544" y="81" width="42" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[, C.C.]]></text>
+			</staticText>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement uuid="89e94b51-3682-4a5a-b272-9bba5acb344d" key="textField" mode="Transparent" x="92" y="24" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NUMERO_CREDITO_MOSTRAR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="39e4013d-3932-47fe-b738-0be8f414c3ae" key="textField" mode="Transparent" x="63" y="68" width="478" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{NOMBRE1_CLIENTE}!=null ?$F{NOMBRE1_CLIENTE} : "" )+" "+
+( $F{NOMBRE2_CLIENTE}!=null ?$F{NOMBRE2_CLIENTE} : "" )+" "+
+( $F{APELLIDO1_CLIENTE}!=null ?$F{APELLIDO1_CLIENTE} : "" )+" "+
+( $F{APELLIDO2_CLIENTE}!=null ?$F{APELLIDO2_CLIENTE} : "" )]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="97a999ef-f696-40e8-87cf-9dcd932a1c40" key="textField" mode="Transparent" x="588" y="68" width="83" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CEDULA_CLIENTE_MOSTRAR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="a122e99b-bc7d-439d-840e-28a54818a22d" key="textField" mode="Transparent" x="63" y="81" width="478" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{NOMBRE1_CODEUDOR}!=null ?$F{NOMBRE1_CODEUDOR} : "" )+" "+
+( $F{NOMBRE2_CODEUDOR}!=null ?$F{NOMBRE2_CODEUDOR} : "" )+" "+
+( $F{APELLIDO1_CODEUDOR}!=null ?$F{APELLIDO1_CODEUDOR} : "" )+" "+
+( $F{APELLIDO2_CODEUDOR}!=null ?$F{APELLIDO2_CODEUDOR} : "" )]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="00683d33-cbc2-480c-9d1a-08f4e1a5b034" key="textField" mode="Transparent" x="588" y="81" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CEDULA_CODEUDOR_MOSTRAR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="91524d37-9de0-4677-b9b4-03d3803a1548" key="staticText-49" mode="Transparent" x="477" y="25" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[VENCIMIENTO]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="7d5f8655-d484-48f4-a943-4f8f0206353b" key="line-9" x="570" y="35" width="121" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="2c9942cc-8c94-4688-8052-6de580fa1cc9" key="staticText-50" stretchType="RelativeToTallestObject" x="5" y="94" width="692" height="173"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="9" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<text><![CDATA[Nos obligamos a pagar solidaria e incondicionalmente a FENALCO VALLE DEL CAUCA, o a su orden a quien represente sus derechos en sus oficinas. la suma de:____________________________________________________$ _________________      En caso de atraso en el pago de una o cualquiera de las cuotas de amortización, reconoceremos los gastos administrativos de cobranza, intereses de mora a la tasa máxima autorizada por la ley y el 20% a título de pena, sobre el valor total en mora hasta su cancelación definitiva sin perjuicio del derecho del acreedor a declarar en tal evento vencido el plazo y exigible de una vez y en su totalidad el capital, intereses remuneratorios, la pena y la mora, caso en el cual serán de nuestro cargo el impuesto de timbre, y demás gastos que se causen con la emisión de este pagaré, lo mismo que los honorarios de abogado y las costas del cobro si se diere lugar a él. En caso de muerte de los deudores, el acreedor queda con el derecho a exigir la totalidad del crédito a uno o cualquiera de los herederos, sin necesidad de demandarlos a todos. Así mismo el acreedor queda facultado para declarar vencido el plazo y exigir el pago total de la obligación, más los intereses corrientes, la mora y demás accesorios en lo siguientes casos: A) Mora en el pago de uno o más de los vencimientos señalados, o de cualquier otra obligación que directa o indirectamente tengan los deudores para con el acreedor. B) La  persecución por un tercero del bien dado en prenda, para el pago de cualquier obligación. C) El giro de cheques sin provisión de fondos. D) Cuando uno cualquiera de los otorgantes o sus codeudores solicite o sea declarado en quiebra, concordato y liquidación obligatoria. E) Cuando el deudor, los codeudores o avalistas sean demandados judicialmente por un tercero distinto al acreedor. F) En caso de muerte del deudor, codeudor o avalista.
+Los deudores de este pagare autorizamos a Fenalco Valle del Cauca  de manera permanente e irrevocable con fines estadísticos, de control, supervisión y de información comercial a reportar, verificar, procesar, consultar, conservar, suministrar, actualizar y divulgar a cualquiera de las centrales de información de Colombia autorizadas para tal efecto, nuestro comportamiento crediticio.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="27bda7a4-2bb6-4b2b-b7e2-415b2f0873b9" key="staticText-53" x="5" y="267" width="176" height="12"/>
+				<textElement>
+					<font fontName="SansSerif" size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[CARTA DE INSTRUCCIONES.  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cf514fec-22d7-48d4-a256-7cc3bc334bd3" key="staticText-54" x="4" y="278" width="692" height="492"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[actuando en mí (nuestro) propio(s) o en nombre y representación de __________________________,en los términos del articulo 622 del Código de Comercio autorizo(amos) a FENALCO VALLE DEL CAUCA, o a quien hiciere sus veces, para diligenciar los espacios en blanco dejados en el pagaré indicado en la referencia, de acuerdo con las siguientes instrucciones:
+1. FENALCO VALLE DEL CAUCA podrá diligenciar los espacios en blanco del pagaré en cualquiera de los siguientes eventos:
+a) El no pago oportuno de cualquier suma de dinero que conjunta o separadamente, debiera(mos) a FENALCO VALLE DEL CAUCA el concepto de capital, intereses corrientes y/o de mora, primas de seguro, honorarios, impuestos, comisiones, gastos de cobranzas extrajudicial y/o judicial.  FENALCO VALLE DEL CAUCA podrá hacer uso de esta facultad, aún cuando al incumplimiento se refiera a una sola de las obligaciones, por cuanto ello implicará la exigibilidad anticipada de las demás.
+b) La admisión y/o declaratoria de algunos de los firmantes de esta carta en  cualquier proceso o tramite de índole concursal y/o liquidatorio, o  acuerdo de promoción de pagos.
+c) Insolvencia de cualquiera de los firmantes de esta carta o la verificación de cualquier hecho que coloque alguno de estos en circunstancias que dificulte y/o imposibilite el cumplimiento de sus obligaciones para con FENALCO VALLE DEL CAUCA, a juicio de éste.
+d) Disolución, liquidación, muerte o interdicción de cualquiera de los firmantes de la presente carta.
+e) Si los bienes de cualquiera de los firmantes de esta carta son embargados o perseguidos en ejercicio de cualquier acción o se demeritare o depreciare de modo que dejare de ser suficiente garantía para FENALCO VALLE DEL CAUCA, a juicio de éste.
+f) En los demás casos de la ley.
+2. FENALCO VALLE DEL CAUCA diligenciará el espacio correspondiente a la fecha de vencimiento del pagaré, estableciendo aquella en la que se llenen sus espacios en blanco.
+3. FENALCO VALLE DEL CAUCA  diligenciará el espacio correspondiente al valor del pagaré con el que resulte de la suma de todas las obligaciones a cargo de cualquiera y/o todos los firmantes de esta carta, al momento de diligenciar los espacios en blanco se encuentren vencidas o no, por concepto de capital, intereses corrientes y/o mora, primas de seguros, honorarios, impuestos, comisiones, gastos de cobranza extrajudicial y/o judicial o cualquier otro, derivados de cualquiera y/o de todas las siguientes operaciones activas de crédito: apertura de crédito mediante las tarjetas de crédito marca,  o cualquier otra que expidiere FENALCO VALLE DEL CAUCA, apertura de crédito o crédito de consumo simple o rotativo.
+4. Las obligaciones a mi(nuestro) cargo se establecerá por los libros y comprobantes de contabilidad de FENALCO VALLE DEL CAUCA, los cuales acepto(amos) en todo lo concerniente a dicha(s) obligaciones.
+5. Autorizamos a FENALCO VALLE DEL CAUCA para debitar o descontar de cualquier cuenta corriente, de ahorros, deposito en garantía a termino y en general de cualquier suma liquida a favor de cualquiera de los firmantes de esta carta el importe de cualquiera de las obligaciones mencionadas en el literal A del numeral  que antecede, sean estas a cargo de uno o de todos los firmantes del presente documento.
+6. Autorizamos a FENALCO Valle del Cauca al cobro mensual de cuota de manejo estipulada por la entidad como  concepto de administración del crédito.
+Autorizo a FENALCO VALLE DEL CAUCA para compartir con el SUSCRIPTOR, AFILIADO y/o comercializador o proveedor de los biene s y servicios financiados por FENALCO VALLE DEL CAUCA, la información y/o documentación que le suministre referente a mi o a la entidad que represento, toda la información relacionada con las operaciones de crédito que solicite y/o celebre con FENALCO VALLE DEL CAUCA para fines administrativos, de mercadeo y ventas.
+Autorizo a FENALCO VALLE DEL CAUCA, AL SUSCRIPTOR Y/O AFILIADO para enviar mensajes relativos a mis obligaciones y ofertas comerciales al terminal móvil de telecomunicaciones y/o a la dirección electróni ca aquí reportada como de mi uso o propiedad.
+Declaro que conozco, entiendo, y acepto el contenido del presente documento en el anverso y reverso y cada una de sus partes.
+Declaro que estoy completamente informado(a) sobre todos los requisitos inherentes al crédito que solicito y me acojo a ellos, aceptando en toda lo establecido en el reglamento de crédito.
+El comité Financiero de FENALCO VALLE DEL CAUCA está facultado para verificar que el valor del crédito concedido haya sido destinado a la finalidad para la cual fue aprobada.
+Autorizo a FENALCO VALLE DEL CAUCA, o a quien represente sus derechos u ostente en el futuro la calidad de acreedor a reportar, procesar, solicitar y divulgar a las centrales de información financiera Datacredito o a cualquier otra entidad que maneje o administre bases de datos con los mismos fines, toda la información referente a mi comportamiento comercial. Lo anterior implica que el cumplimiento o incumplimiento de mis obligaciones se reflejará en las mencionadas bases de datos, en donde se consignan de manera completa, todos los datos referentes a mi actual y pasado comportamiento frente al sector financiero y en general frente al cumplimiento de mis obligaciones.
+
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0d8db454-1a7c-4c03-88ea-1f3bb4c79dcf" key="staticText-55" x="0" y="3" width="697" height="21"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[PAGARÉ Y CARTA DE INSTRUCCIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2c7b455d-e2c8-4b5b-8035-dad34c30a3fc" key="staticText-56" mode="Transparent" x="4" y="43" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[PAGARE A LA ORDEN DE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4a4e6bd2-f136-44ff-bd0c-b94b3900ebdf" key="staticText-57" mode="Transparent" x="122" y="45" width="405" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[FEDERACION NACIONAL DE COMERCIANTES FENALCO -SECCIONAL VALLE DEL CAUCA--]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="85f98be2-8c87-4128-a04d-ff67a7e300b6" key="line-12" x="63" y="92" width="474" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="620dc10c-5a65-49fd-bf8a-b25ccf6a1094" key="line-13" x="63" y="80" width="474" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="8c860619-58bd-4ef1-ac1d-fd7ef82cf7e5" key="line-14" x="588" y="80" width="83" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="600dc44d-17cc-4226-896d-2f0efb0b83fe" key="line-15" x="590" y="93" width="83" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="ce2feae0-fd74-4ae3-9c3f-8c4d6e1481c6" key="staticText-58" x="138" y="267" width="556" height="12"/>
+				<textElement>
+					<font fontName="SansSerif" size="9" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<text><![CDATA[Yo.  y/o nosotros mayor (es), identificado(a)(s) como aparece al pie de mi(nuestras) firma(s), ]]></text>
+			</staticText>
+			<frame>
+				<reportElement uuid="0690f4f8-ee3e-41d9-94b9-6e205532cd98" key="frame-1" x="751" y="153" width="0" height="0"/>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

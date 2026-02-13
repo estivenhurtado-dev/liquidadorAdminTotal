@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+
+
+
+
+	<persistence-unit name="open">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<jta-data-source>jdbc/liquidadorAdminTotalOpenDS</jta-data-source>
+		<class>com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.TatTempLiquidacion</class>
+		<properties>
+			<property name="eclipselink.target-server" value="SunAS9" />
+		</properties>
+	</persistence-unit>
+
+
+
+
+
+	<persistence-unit name="fena">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<jta-data-source>jdbc/liquidadorAdminTotalFenaDS</jta-data-source>
+		<properties>
+			<property name="eclipselink.target-server" value="SunAS9" />
+		</properties>
+	</persistence-unit>
+
+
+
+	<persistence-unit name="Consola">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<jta-data-source>jdbc/liquidadorAdminTotalconsolaDS</jta-data-source>
+		<properties>
+			<property name="eclipselink.target-server" value="SunAS9" />
+		</properties>
+	</persistence-unit>
+	
+
+
+
+	<persistence-unit name="AS400">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<jta-data-source>jdbc/liquidadorAdminTotalAS400DS</jta-data-source>
+		<properties>
+			<property name="eclipselink.target-server" value="SunAS9" />
+			<!--SOLO PARA PRUEBAS NO DESCOMENTARIAR -->
+			<!-- <property name="eclipselink.logging.level" value="FINEST"/> <property 
+				name="eclipselink.logging.level.sql" value="FINE"/> <property name="eclipselink.target-database" 
+				value="Oracle10g"/> <property name="eclipselink.logging.logger" value="ServerLogger"/> -->
+			<!--TERMINA DATOS DE PRUEBAS NO DESCOMENTARIAR -->
+			<!--QUITAR COMENTARIOS -->
+		</properties>
+	</persistence-unit>
+
+
+
+</persistence>

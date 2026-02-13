@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<h:outputStylesheet library="css" name="defaultPreliquidacion.css" />
+	<h:outputScript library="js" name="validaciones2.js" />
+	<title>Fenalco Valle ::: Preliquidación Educativa</title>
+	<style>
+.ui-messages-warn, .ui-messages-error {
+	width: 940px !important;
+}
+</style>
+
+</h:head>
+<h:body>
+	<p:focus />
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<p:graphicImage library="images" name="ajax-loader.gif" />
+	</p:dialog>
+
+	<div align="center">
+		<h:graphicImage library="images" name="banner.jpg" />
+		<h:form id="form1">
+			<p:messages style="width:1136px" id="messages1" closable="true" />
+			<p:sticky target="messages1" />
+			<p:panel style="width: 1136px; margin-top: -5px;"
+				header="Preliquidación Educativa" id="formularioingreso" >
+				<div align="">
+					<br></br> <br></br>
+
+					<p:panelGrid id="consul" columns="2"  styleClass="panelForm">
+						<h:outputText value="Institución Educativa *"
+							 styleClass="label" />
+						
+						<h:outputText style="background-color: none; width: 365px;"
+							value="#{MBPreLiquidacion.tsolicUniversidadEntityGlobal.nombre}" />
+						<h:outputText rendered="false" style="background-color: none; " value="Código  :" />
+						<h:outputText rendered="false" style="background-color: none; width: 365px;"
+							value="#{MBPreLiquidacion.codigoAfiliado}" />
+						<h:outputText rendered="false" style="background-color: none; color:Red "
+							value="Tasa de Interes MV(%):" />
+						<h:outputText rendered="false" style="background-color: none;  color:Red "
+							value="#{MBPreLiquidacion.tempPagareTasaInteres.valor}" />
+
+					
+					
+
+						<h:outputText style="background-color: none; "
+							value="Fecha Liquidación (dd/mm/aaaa):" rendered="false" />
+						<h:outputText style="background-color: none;  "
+							value="#{MBPreLiquidacion.fecha}" rendered="false" />
+
+
+						<h:outputText style="background-color: none;"
+							value="Fecha Primera Cuota (dd/mm/aaaa):" rendered="false" />
+						<h:outputText style="background-color: none; "
+							value="#{MBPreLiquidacion.fechaPrimeraCuota}" rendered="false" />
+
+
+
+
+
+
+						<h:outputText style="background-color: none; " rendered="false" 
+							value="Cédula:" />
+
+						<p:inputText style="width: 365px;" id="dato1" maxlength="20" rendered="false" 
+							onkeyup="numberFormat(stripNonNumeric(this),this,false);"
+							value="#{MBPreLiquidacion.cedulaGirador}">
+							<p:ajax event="blur" update="dato5,dato7,messages1"
+								listener="#{MBPreLiquidacion.procesarCodigoBarras}" />
+						</p:inputText>
+
+						<h:outputText style="background-color: none; " value="Nombre :"  rendered="false" />
+						<p:inputText style="width: 365px;" id="dato2" maxlength="60" rendered="false" 
+							value="#{MBPreLiquidacion.nombre}"
+							onkeyup="value=value.toUpperCase()">
+						</p:inputText>
+
+
+						<h:outputText style="background-color: none; " value="Semestre:" rendered="false" />
+						<p:inputText style="width: 365px;" id="dato3" maxlength="50" rendered="false" 
+							value="#{MBPreLiquidacion.semestre}"
+							onkeyup="value=value.toUpperCase()">
+						</p:inputText>
+
+						<h:outputText style="background-color: none; " value="Programa:	" rendered="false" />
+						<p:inputText style="width: 365px;" id="dato4" maxlength="50" rendered="false" 
+							value="#{MBPreLiquidacion.programa}"
+							onkeyup="value=value.toUpperCase()">
+						</p:inputText>
+
+						<h:outputText style="background-color: none; " value="Codigo Estudiante:"  rendered="false" />
+						<p:inputText style="width: 365px;" id="dato5" maxlength="50" rendered="false" 
+							value="#{MBPreLiquidacion.referencia}"
+							onkeyup="value=value.toUpperCase()">
+							<p:ajax event="blur"
+								listener="#{MBPreLiquidacion.procesarCodigoBarras}" />
+						</p:inputText>
+
+						<h:outputText style="background-color: none; " value="Periodo:" rendered="false" />
+						<p:inputText style="width: 365px;" id="dato6" maxlength="50" rendered="false" 
+							value="#{MBPreLiquidacion.periodo}"
+							onkeyup="value=value.toUpperCase()">
+						</p:inputText>
+						<h:outputText style="background-color: none; "
+							value="Fecha Liquidación (dd/mm/aaaa):" />
+						<h:outputText style="background-color: none;  "
+							value="#{MBPreLiquidacion.fecha}" />
+
+						<h:outputText style="background-color: none; "
+							value="Valor a Financiar: " />
+						<p:inputText style="width: 365px;" id="dato7" maxlength="20"
+							onkeyup="numberFormat(stripNonNumeric(this),this,false);"
+							value="#{MBPreLiquidacion.valorLiquidar}">
+
+							<p:ajax event="blur"
+								listener="#{MBPreLiquidacion.procesarCodigoBarras}" />
+						</p:inputText>
+
+						<h:outputText style="background-color: none; "
+							value="Plazo (meses):" />
+						<p:inputText style="width: 365px;" id="dato8" maxlength="2"
+							onkeyup="numberFormat(stripNonNumeric(this),this,false);"
+							value="#{MBPreLiquidacion.plazoMeses}">
+
+						</p:inputText>
+
+
+
+
+
+					</p:panelGrid>
+
+
+
+					<h:panelGrid id="botones" columns="3" cellpadding="4">
+					<p:commandButton value="Atras" rendered="false"
+							update="formularioingreso,messages1" style="width: 180px;"
+							action="#{MBPreLiquidacion.regresar}" styleClass="btn btn-blue"
+							id="Volver">
+						</p:commandButton>
+						<p:commandButton value="Liquidar" update="messages1,dato9"
+							onstart="PF('statusDialog').show();  "
+							oncomplete="PF('statusDialog').hide();" style="width: 180px;"
+							action="#{MBPreLiquidacion.liquidar}" styleClass="btn btn-green"
+							id="Liquidar">
+						</p:commandButton>
+						<p:commandButton value="Limpiar" update="formularioingreso"
+							style="width: 180px;" action="#{MBPreLiquidacion.limpiar}"
+							styleClass="btn btn-green" id="Limpiar">
+						</p:commandButton>
+						
+
+					</h:panelGrid>
+
+					<h:panelGrid id="pie" columns="2" cellpadding="4">
+						<h:outputText style="background-color: none; width: 270px; "
+							value="Valor Cuota: " />
+						<p:inputText style="width: 350px;" id="dato9" maxlength="2"
+							readonly="true"
+							onkeyup="numberFormat(stripNonNumeric(this),this,false);"
+							value="#{MBPreLiquidacion.valorCuotaMostrar}">
+
+
+
+						</p:inputText>
+
+					</h:panelGrid>
+					<h:panelGrid id="pieBoton" columns="1" cellpadding="4">
+						<p:commandButton value="Archivo Detallado" style="width: 180px;"
+							ajax="false"
+							action="#{MBPreLiquidacion.generarReportePreliquidacion}"
+							styleClass="btn btn-green" id="ArchivoDetallado">
+						</p:commandButton>
+						<p:commandButton value="Crear Solicitud"
+							update="formularioingreso,messages1" style="width: 180px;"
+							action="#{MBPreLiquidacion.irSolicitud}"
+							styleClass="btn btn-green" id="Aprobación">
+						</p:commandButton>
+
+					</h:panelGrid>
+
+					<h:outputText value=" " />
+
+
+
+
+
+
+
+
+
+				</div>
+
+
+
+
+			</p:panel>
+
+	<br></br>
+			<div align="center" style="border: 1">
+				<h:outputText
+					value="Fenalco Valle del Cauca / Cra 9 No. 5-23. Cali- Colombia - Sur América / Conmutador: 057-2-898 35 35 ©Copyright Fenalco Valle 2020"
+					id="otxPiePagina" styleClass="piedepagina" />
+			</div>
+
+		</h:form>
+		
+	</div>
+	
+</h:body>
+</html>
+

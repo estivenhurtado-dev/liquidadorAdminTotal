@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<h:outputStylesheet library="css" name="default.css" />
+	<h:outputScript library="js" name="validaciones.js" />
+
+	<style>
+.ui-blockui {
+	background-color: black;
+}
+
+.ui-blockui-content {
+	background-color: black;
+}
+
+.ui-widget-overlay {
+	background: black;
+	opacity: .8;
+}
+
+.ui-widget-overlay {
+	background-color: black;
+}
+</style>
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-73273572-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</h:head>
+<h:body onload="#{MBLiquidacionPre.pintarParametrosRequest()}">
+	<h:form id="form1">
+
+
+		<div align="center">
+
+			<p:growl id="messages1" sticky="true" />
+
+			<p:panel style="width: 900px;" header="Soporte Pago"
+				id="formularioPagareVoucher">
+				<h:panelGrid id="forpagare" columns="2" cellpadding="2">
+					<h:outputText rendered="#{MBLiquidacionPre.codigoReportesB}"
+						style="background-color: none; " value="Codigo del Afiliado: " />
+
+					<p:inputText rendered="#{MBLiquidacionPre.codigoReportesB}"
+						style="width: 200px;" id="dato8" maxlength="20"
+						onkeyup="javascript:this.value = stripNonNumeric(this.value);"
+						value="#{MBLiquidacionPre.reportePagoCodigoAfiliado}">
+					</p:inputText>
+
+
+
+
+
+
+					<h:outputText style="background-color: none; "
+						value="Fecha Inicial: " />
+
+
+					<p:calendar style="width: 200px;" id="dato9"
+						value="#{MBLiquidacionPre.fechaSoporteInicial}">
+					</p:calendar>
+					<h:outputText style="background-color: none; " value="Fecha Final " />
+					<p:calendar style="width: 200px;" id="dato10"
+						value="#{MBLiquidacionPre.fechaSoporteFinal}">
+					</p:calendar>
+
+				</h:panelGrid>
+
+				<h:panelGrid id="forpagaref" columns="2" cellpadding="2">
+
+
+					<p:commandButton value="Generar Reporte" style="width: 180px;"
+						styleClass="btn btn-green" id="reportes" update="messages1"
+						actionListener="#{MBLiquidacionPre.generarSoportePago}"
+						ajax="false"></p:commandButton>
+						
+
+				</h:panelGrid>
+
+
+
+
+
+
+			</p:panel>
+
+
+
+
+
+
+
+
+		</div>
+	</h:form>
+</h:body>
+</html>
+

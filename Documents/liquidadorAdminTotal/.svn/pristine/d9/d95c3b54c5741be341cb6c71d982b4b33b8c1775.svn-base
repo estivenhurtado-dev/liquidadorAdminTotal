@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<h:outputStylesheet library="css" name="default.css" />
+	<h:outputScript library="js" name="validaciones.js" />
+
+	<style>
+.ui-blockui {
+	background-color: black;
+}
+
+.ui-blockui-content {
+	background-color: black;
+}
+
+.ui-widget-overlay {
+	background: black;
+	opacity: .8;
+}
+
+.ui-widget-overlay {
+	background-color: black;
+}
+</style>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-73273572-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</h:head>
+<h:body onload="PF('vp').show();">
+	<h:form id="form1">
+
+
+
+		<div align="center">
+
+			<p:growl id="messages1" sticky="true" />
+			<p:panel style="width: 800px;" header="Envio SMS"
+				id="formularioingreso">
+
+
+				<h:panelGrid columns="2" styleClass="panelForm">
+					<h:outputText style="background-color: none; "
+						value="Numero de Aprobación:" />
+					<p:inputText style="width: 300px;" id="dato0" maxlength="8"
+						onkeyup="javascript:this.value = stripNonNumeric(this.value);"
+						value="#{MBTSolicEnvioSmsCredenciales.numeroAprobacion}">
+					</p:inputText>
+
+					<h:outputText style="background-color: none; " value="Celular:" />
+					<p:inputText style="width: 300px;" id="dato1" maxlength="10"
+						onkeyup="javascript:this.value = stripNonNumeric(this.value);"
+						value="#{MBTSolicEnvioSmsCredenciales.messageTo}">
+					</p:inputText>
+
+					<h:outputText style="background-color: none; "
+						value="Base De Datos:" />
+					<p:selectOneMenu id="oneMenuBD" style="width:310px"
+						value="#{MBTSolicEnvioSmsCredenciales.selectBaseDatos}">
+						<f:selectItem itemLabel="Seleccione La Base De Datos" itemValue="" />
+						<f:selectItem itemLabel="AS400" itemValue="bdAS400" />
+						<f:selectItem itemLabel="OPENCARD" itemValue="bdOpenCard" />
+					
+						<p:ajax listener="#{MBTSolicEnvioSmsCredenciales.cambiarEstadoSubConsulta}"  update="subConsulta"/>
+						
+					</p:selectOneMenu>
+
+
+					<h:outputText style="background-color: none; " 
+						value="Servicio:" />
+					<p:selectOneMenu  id="subConsulta" style="width:310px" disabled="#{MBTSolicEnvioSmsCredenciales.subConsulta}"
+						value="#{MBTSolicEnvioSmsCredenciales.selectConsulta}">
+						
+					
+						<f:selectItem itemLabel="Seleccione El Servicio" itemValue="" />
+						<f:selectItem itemLabel="Posfechado" itemValue="consulta1" />
+						<f:selectItem itemLabel="Al Día" itemValue="consulta2" />
+					</p:selectOneMenu>
+
+
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" cellpadding="10">
+					<p:commandButton value="Limpiar"
+						update="oneMenuBD, dato0, dato1,mensa"
+						action="#{MBTSolicEnvioSmsCredenciales.enviarSmsLimpiar}"
+						styleClass="btn btn-green" id="limpiar">
+					</p:commandButton>
+
+
+					<p:commandButton value="Consultar" update="messages1, mensa"
+						action="#{MBTSolicEnvioSmsCredenciales.enviarSmsAprobaciones}"
+						styleClass="btn btn-green" id="envio">
+					</p:commandButton>
+
+				</h:panelGrid>
+
+
+
+
+
+			</p:panel>
+
+			<p:blockUI block="formularioingreso" widgetVar="fi" />
+			<p:blockUI block="vistaPrevia" widgetVar="vp" />
+
+			<BR />
+
+
+			<p:panel id="vistaPrevia" style="width: 800px; "
+				header="Vista Previa Mensaje">
+
+
+				<h:panelGrid columns="1" cellpadding="10">
+
+					<h:outputText style="background-color: none; " id="mensa"
+						value="#{MBTSolicEnvioSmsCredenciales.messageText}" />
+
+
+
+				</h:panelGrid>
+				<h:panelGrid columns="4" cellpadding="10">
+					<p:commandButton value="Cancelar" update="messages1, mensa"
+						action="#{MBTSolicEnvioSmsCredenciales.enviarSmsCancelar}"
+						styleClass="btn btn-green" id="cancelar">
+					</p:commandButton>
+
+					<p:commandButton value="Enviar SMS"
+						update="messages1, mensa,oneMenuBD, dato0, dato1, subConsulta"
+						action="#{MBTSolicEnvioSmsCredenciales.enviarSmsUsuario}"
+						styleClass="btn btn-green" id="envio2">
+					</p:commandButton>
+					<p:blockUI block="envio2" trigger="envio2">  
+                                Espere...<br />
+					</p:blockUI>
+				</h:panelGrid>
+			</p:panel>
+		</div>
+	</h:form>
+</h:body>
+</html>
+

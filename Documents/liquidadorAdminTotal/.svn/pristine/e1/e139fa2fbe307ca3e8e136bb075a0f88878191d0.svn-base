@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="liquidacionAdminTotal" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="34af4c33-2d73-4f7a-b6b2-1ce33785aebd">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="240"/>
+	<parameter name="IMAGEN_DIR" class="java.lang.String"/>
+	<parameter name="NOAUTORIZACION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="OPERADOR" class="java.lang.String"/>
+	<parameter name="CEDULA" class="java.lang.String"/>
+	<parameter name="NOMBRE" class="java.lang.String"/>
+	<parameter name="VALORCOMPRA" class="java.lang.String"/>
+	<parameter name="PLAZO" class="java.lang.String"/>
+	<parameter name="INTERES" class="java.lang.String"/>
+	<parameter name="TOTALFINANCIAR" class="java.lang.String"/>
+	<parameter name="VALORCUOTA" class="java.lang.String"/>
+	<parameter name="ESTUDIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT SYSDATE AS HOY FROM DUAL]]>
+	</queryString>
+	<field name="HOY" class="java.sql.Timestamp"/>
+	<summary>
+		<band height="802" splitType="Stretch">
+			<image>
+				<reportElement uuid="c6a4336a-6b5a-449a-ac45-0b4079cf3bf8" x="71" y="19" width="25" height="26"/>
+				<imageExpression><![CDATA[$P{IMAGEN_DIR}+"logo_fenalco.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="c0667df7-7954-4746-aaac-12bae1ee0825" x="269" y="20" width="215" height="26"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fenalco Valle - Liquidacion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="51159ccf-92fb-4354-bdd5-677fa25187dd" x="21" y="42" width="517" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[SERVICIO AL CLIENTE FENALCO VALLE DEL CAUCA  092 898 35 35 Ext. 3544,COBRANZAS  092 8983523 / 24.]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="ef509b1d-fe33-4089-92d4-6af1aac50b65" x="64" y="62" width="426" height="1"/>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement uuid="667acb06-ea4f-48ec-b564-58254f8aa90b" x="70" y="70" width="78" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Forma de Pago:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2506fae5-f446-4fc9-a1a2-ad02a1f8b9cc" x="69" y="82" width="79" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cedula:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b7671481-7487-49c0-91a3-a49531e96591" x="69" y="94" width="79" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor Compra:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="02d0c56e-3b97-4724-987a-148c5e1eb3f7" x="69" y="106" width="79" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Interes Corriente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="53e49a87-bfa0-43fe-ade5-fb1d665def37" x="261" y="70" width="80" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Liquidación:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dd77708a-dbdb-4db8-aeb8-9a2f7f745795" x="261" y="82" width="80" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="de7f6f61-199d-4809-b444-c25b3e96ae78" x="261" y="94" width="80" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plazo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cee2384e-d745-46a4-a5fa-5e7dd88ebea8" x="261" y="106" width="301" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Ciclo 1 factura 15 de cada mes fecha limite de pago 2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c16e5abb-4fb8-4085-83a5-33ad873f1336" x="261" y="118" width="280" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Ciclo 2 factura 30 de cada mes fecha limite de pago 17]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="2b1e124c-86bd-417b-ae9c-67674dd98bbc" x="64" y="141" width="426" height="55"/>
+			</rectangle>
+			<line>
+				<reportElement uuid="37fd367d-2c1f-4c62-8ff3-dad8277f18ee" x="64" y="153" width="426" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="17d1ab57-370c-4800-acd4-854ed70235fd" x="64" y="141" width="426" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LIQUIDACION TOTAL
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3f489d0d-dc5b-49ba-af00-963f77fcab39" x="68" y="155" width="187" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Valor de la compra:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ee5862ee-f6fe-4615-bf11-118302d473fa" x="68" y="167" width="187" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Valor total a financiar:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9a9dd3b3-deda-4196-864f-b321ec0a550f" x="68" y="179" width="187" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Valor Mensual Aproximado de las Cuotas Liquidadas:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b3a8388e-23e7-42df-8d76-07373cc90cf5" x="66" y="213" width="418" height="221"/>
+				<textElement textAlignment="Justified">
+					<font size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Con la firma del presente documento declaro (amos) que he (mos) sido plenamente informado(s) de las condiciones del crédito otorgado y por ende de la respectiva operación, condiciones que aparecen en el presente documento, del cual mantengo (emos) copia y que incluyen cuota capital, intereses corrientes, seguro de vida deudores, cuota de manejo por administración del crédito, valor descuento por compra del establecimiento, cargada por solicitud expresa del establecimiento de comercio. En consecuencia declaro (amos) que entiendo (emos) y acepto (amos) que en la citada operación Fenalco Valle del Cauca tendrá el carácter de acreedor del crédito con todas las prerrogativas, facultades y condiciones reconocidas para dicho carácter por la ley y/o los respectivos títulos de deuda, contratos, autorizaciones o demás documentos que suscriba (mos) al efecto. Igualmente, con la firma del presente documento, declaro (amos) que entiendo (emos) y acepto (amos) que el crédito solicitado está avalado  por FENALCO Valle del Cauca, en caso de entrar en mora,  pagaré las comisiones aplicables más IVA, y los gastos de cobranza que podrán ser de hasta el 20% del valor en mora. Recuerde que si usted incurre en mora,   deberá cancelar a FENALCO Valle del Cauca el valor en mora,  mas los gastos administrativos y de cobranza, honorarios y paz y salvo que FENALCO aplique.  Autorizo (mos) a Fenalco Valle del Cauca  de manera permanente e irrevocable con fines estadísticos, de control, supervisión y de información comercial a reportar, verificar, procesar, consultar, conservar, suministrar, actualizar y divulgar a cualquiera de las Centrales de Información de Colombia autorizadas para tal efecto, nuestro comportamiento crediticio. Los deudores, firman y aceptan la asignación de un cupo de crédito rotativo,  el cual estará vigente hasta que cualquiera de los firmantes solicite su cancelación mediante comunicado escrito en las oficinas de FENALCO VALLE DEL CAUCA; no sin antes cancelar los saldos que a la fecha se adeuden por cualquier concepto. Autorizo a La Federación Nacional de Comerciantes FENALCO Seccional VALLE DEL CAUCA para que recolecte, almacene, use y administre mis datos personales, los cuales le han sido suministrados con la finalidad de desarrollar su gestión gremial y prestar sus servicios, de conformidad con lo establecido en Política de Tratamiento de Datos Personales la cual se encuentra disponible para su consulta en la página www.fenalcovalle.com en el enlace  “Políticas de Tratamiento de Datos Personales”.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="17bc5a85-5189-4c55-a067-0f1bd424c7c8" x="233" y="610" width="85" height="86"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="4567584c-4a59-4379-bdd6-845debdd9574" x="233" y="676" width="85" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Huella]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="55f2f991-a1b7-496a-8b6f-14d309349627" x="68" y="696" width="131" height="32"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Liquidacion Aceptada,
+firma y sello del cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ddbe7388-f392-47fc-abb6-f73ccc3ce073" x="385" y="694" width="131" height="32"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Operador Fenalco]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="d8394ff3-1e4a-44eb-b473-a4cceddce6a2" x="382" y="693" width="100" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="f75d87ee-e328-4039-845c-70d333db7c5d" x="66" y="694" width="120" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="14210a81-6476-4872-ac88-209da00fa59b" x="152" y="70" width="96" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Pagares]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="b9157f2c-b451-40a2-a0d2-a9dca6af8672" x="342" y="70" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HOY}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="07444328-e3cc-4204-a9db-81414c812eae" x="152" y="82" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CEDULA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="78cad3f0-2740-4198-b52c-7f53093051d1" x="152" y="94" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{VALORCOMPRA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b16826a5-f2df-46ab-b9ac-89564d0d68be" x="152" y="106" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INTERES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7d461ba4-09c7-40ce-8152-91065e9540ae" x="342" y="94" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PLAZO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d7f44a98-7e84-44c5-be13-8d1488a05562" x="386" y="155" width="100" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{VALORCOMPRA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="68a4a7b1-75a6-4f16-8b0d-bb3ec8520016" x="386" y="167" width="100" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TOTALFINANCIAR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a8527c5e-3ead-4196-a208-abc5c81f5b0d" x="386" y="179" width="100" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{VALORCUOTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3afb8c2d-54b4-4209-b2df-30456f82a960" x="341" y="82" width="149" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a649db65-ea1e-4416-a53e-149e8dca3ecd" x="385" y="677" width="97" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{OPERADOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

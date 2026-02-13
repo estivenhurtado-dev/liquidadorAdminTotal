@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<h:outputStylesheet library="css" name="defaultPreliquidacion.css" />
+	<h:outputScript library="js" name="validacionesPreLiquidacion.js" />
+	<title>Fenalco Valle ::: Preliquidación Educativa</title>
+	<style>
+.ui-messages-warn, .ui-messages-error {
+	width: 940px !important;
+}
+.ui-panel .ui-panel-titlebar {
+    padding: 15px 20px !important;
+    font-size: 16px !important;
+    color: #ffffff !important;
+    z-index: 100 !important;
+    font-family: 'Arial' !important;
+    font-weight: bold !important;
+    border-radius: 1px !important;
+    -webkit-border-radius: 1px !important;
+    -moz-border-radius: 1px !important;
+    background: none !important;
+    background-color: #2399e5 !important;
+    margin: -2px !important;
+}
+</style>
+
+</h:head>
+<h:body onload="#{MBPreLiquidacion.pintarParametrosRequest()}">
+	<p:focus />
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<p:graphicImage library="images" name="ajax-loader.gif" />
+	</p:dialog>
+
+	<div align="center">
+		<h:graphicImage library="images" name="banner2.jpg" />
+		<h:form id="form1">
+			<p:messages style="width:1136px" id="messages" closable="true" />
+			<p:sticky target="messages" />
+			<p:panel rendered="#{MBPreLiquidacion.panelPaso1}" 
+				header="Preliquidación Educativa" style="width:1136px;">
+				<div align="">
+					<br></br> <br></br>
+					<p:panelGrid columns="2" styleClass="panelForm">
+
+
+						<h:outputText value="Institución Educativa *"
+							id="otxInstitucionEducativaO" styleClass="label" />
+
+
+						<p:selectOneMenu id="otxInstitucionEducativaI"
+							rendered="#{MBPreLiquidacion.listUniversidad}"
+							requiredMessage="Debe Seleccionar La Institución Educativa"
+							value="#{MBPreLiquidacion.universidadSeleccionada}"
+							required="#{MBPreLiquidacion.listUniversidad}"
+							style="width: 350px;">
+							<f:selectItem itemLabel="Seleccione La Institución Educativa"
+								itemValue="" />
+							<f:selectItems value="#{MBPreLiquidacion.listUniversidades}" />
+						</p:selectOneMenu>
+
+
+
+
+						<h:outputText
+							value="#{MBPreLiquidacion.tsolicUniversidadEntity.nombre}"
+							rendered="#{MBPreLiquidacion.inputUniversidad}" />
+
+						<h:outputText value="Nombre Estudiante *"
+							id="otxNombreEstudianteO" styleClass="label" />
+						<p:inputText label="Ingrese El Nombre Completo del Estudiante"
+							style="width:365px" maxlength="100" required="true"
+							id="txtNombreEstudianteI"
+							value="#{MBPreLiquidacion.nombreEstudiante}"
+							requiredMessage="Ingrese El Nombre Completo del Estudiante" />
+
+						<h:outputText value="Correo Electrónico *"
+							id="otxCorreoElectronicoO" styleClass="label" />
+						<p:inputText label="Ingrese El Correo Electrónico" maxlength="80"
+							style="width:365px" required="true" id="otxCorreoElectronicoI"
+							requiredMessage="Ingrese El Nombre Correo Electrónico"
+							value="#{MBPreLiquidacion.correo}"
+							validatorMessage="El Correo Electrónico no es valido debe ser nombreusuario@organizacion.tipo">
+							<f:validateRegex
+								pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+
+						</p:inputText>
+
+
+						<h:outputText value="Número Celular *" id="otxNumeroCelularO"
+							styleClass="label" />
+						<p:inputMask label="Ingrese El Número Celular" maxlength="10"
+							style="width:365px" required="true" id="otxNumeroCelularI"
+							mask="(999) 9999999" value="#{MBPreLiquidacion.celular}"
+							requiredMessage="Ingrese El Número Celular" />
+
+
+
+
+
+
+					</p:panelGrid>
+
+
+					<br></br>
+					<div align="">
+						<h:outputText
+							value="NOTA: Al celular ingresado le llegara un mensaje SMS con un codigo para continuar con el proceso. "
+							styleClass="requiredText" id="otxCamposRequeridos1" />
+					</div>
+					<br></br>
+					<div align="">
+						<h:outputText value="* Campos Obligatorios"
+							styleClass="requiredText" id="otxCamposRequeridos" />
+					</div>
+					<br></br>
+					<p:commandButton value="Continuar"
+						actionListener="#{MBPreLiquidacion.preliquidacion}"
+						disabled="false" id="btnConsultar" update="messages,form1" />
+
+
+
+
+
+
+
+				</div>
+			</p:panel>
+
+			<p:panel rendered="#{MBPreLiquidacion.panelPaso2}"
+				header="Preliquidación Educativa" style="width:1136px">
+				<div align="">
+					<br></br> <br></br>
+					<p:panelGrid columns="3" styleClass="panelForm">
+
+
+
+
+						<h:outputText
+							value="Ingrese código SMS enviado a su celular #{MBPreLiquidacion.celular} *"
+							id="otxCodigoO" styleClass="label" />
+						<p:inputText label="Ingrese código SMS " style="width:365px"
+							maxlength="100" required="true" id="otxCodigoI"
+							value="#{MBPreLiquidacion.codigoOTP}"
+							requiredMessage="Ingrese código SMS enviado a su celular #{MBPreLiquidacion.celular} " />
+
+						<p:commandButton value="Reenviar SMS" immediate="true"
+							actionListener="#{MBPreLiquidacion.reenviarCodigo}"
+							disabled="false" id="btnConsultar4" update="messages,form1" />
+
+
+
+
+					</p:panelGrid>
+
+
+					<br></br>
+
+					<div align="">
+						<h:outputText value="* Campos Obligatorios"
+							styleClass="requiredText" id="otxCamposRequeridos4" />
+					</div>
+					<br></br>
+
+					<p:commandButton value="Cancelar" immediate="true"
+						actionListener="#{MBPreLiquidacion.cancelar}" disabled="false"
+						style="    background-color: red;
+    border-color: red;
+    border: 1px solid red;"
+						id="btnConsultar3" update="messages,form1" />
+
+
+					<p:commandButton value="Continuar"
+						actionListener="#{MBPreLiquidacion.crearLiquidacion}"
+						disabled="false" id="btnConsultar2" update="messages,form1" />
+
+
+
+
+
+
+
+				</div>
+			</p:panel>
+
+			<br></br>
+			<div align="center" style="border: 1">
+				<h:outputText
+					value="Fenalco Valle del Cauca / Cra 9 No. 5-23. Cali- Colombia - Sur América / Conmutador: 057-2-898 35 35 ©Copyright Fenalco Valle 2020"
+					id="otxPiePagina" styleClass="piedepagina" />
+			</div>
+		</h:form>
+	</div>
+</h:body>
+</html>

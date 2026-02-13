@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="REP_PAGARE" pageWidth="725" pageHeight="1118" columnWidth="697" leftMargin="14" rightMargin="14" topMargin="0" bottomMargin="0" uuid="25248f6e-89f3-4b1a-a366-7f9e719e76d9">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="NUMERO_CREDITO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["00000007004010021090865"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CEDULA_CLIENTE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["0000000010531025"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CEDULA_CLIENTE_MOSTRAR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="CEDULA_CODEUDOR_MOSTRAR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="NUMERO_CREDITO_MOSTRAR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="LOGO" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="NUMERO_AUTORIZACION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["313251"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ENDOSO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["S"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\jarevalo\\Desktop\\trabojo open card\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."CODIGO_CLIENTE") AS CODIGO_CLIENTE,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."NUMERO_CREDITO") AS NUMERO_CREDITO,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."NOMBRE1_CLIENTE") AS NOMBRE1_CLIENTE,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."NOMBRE2_CLIENTE") AS NOMBRE2_CLIENTE,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."APELLIDO1_CLIENTE") AS APELLIDO1_CLIENTE,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."APELLIDO2_CLIENTE") AS APELLIDO2_CLIENTE,
+     V_BASICOS_CLIENTE_CODEUDOR."CEDULA_CLIENTE" AS CEDULA_CLIENTE,
+     V_BASICOS_CLIENTE_CODEUDOR."DIREECION_CLIENTE" AS DIREECION_CLIENTE,
+     V_BASICOS_CLIENTE_CODEUDOR."TELEFONO1_CLIENTE" AS TELEFONO1_CLIENTE,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."NOMBRE1_CODEUDOR") AS NOMBRE1_CODEUDOR,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."NOMBRE2_CODEUDOR") AS NOMBRE2_CODEUDOR,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."APELLIDO1_CODEUDOR") AS APELLIDO1_CODEUDOR,
+     TRIM(V_BASICOS_CLIENTE_CODEUDOR."APELLIDO2_CODEUDOR") AS APELLIDO2_CODEUDOR,
+     V_BASICOS_CLIENTE_CODEUDOR."CEDULA_CODEUDOR" AS CEDULA_CODEUDOR,
+     V_BASICOS_CLIENTE_CODEUDOR."DIRECCION_CODEUDOR" AS DIRECCION_CODEUDOR,
+     V_BASICOS_CLIENTE_CODEUDOR."TELEFONO1_CODEUDOR" AS TELEFONO1_CODEUDOR,
+T.GRUPO_AFINIDAD,
+TO_DATE(V.FECHA_HORA_TRANSACCION,'DD/MM/YY') AS FECHA_COMPRA
+FROM
+     "OPENCARD"."V_BASICOS_CLIENTE_CODEUDOR" V_BASICOS_CLIENTE_CODEUDOR , NU_TARJETAS T, V_BASICOS_VOUCHER V
+WHERE
+V_BASICOS_CLIENTE_CODEUDOR."NUMERO_CREDITO"=T.NUMERO_TARJETA
+AND
+	V_BASICOS_CLIENTE_CODEUDOR."NUMERO_CREDITO" = $P{NUMERO_CREDITO}
+AND
+V_BASICOS_CLIENTE_CODEUDOR."NUMERO_CREDITO"=V.NUMERO_CREDITO
+AND to_number(v.numero_aprobacion)=TO_NUMBER($P{NUMERO_AUTORIZACION})
+
+AND
+	V_BASICOS_CLIENTE_CODEUDOR."CEDULA_CLIENTE" = $P{CEDULA_CLIENTE}]]>
+	</queryString>
+	<field name="CODIGO_CLIENTE" class="java.lang.String"/>
+	<field name="NUMERO_CREDITO" class="java.lang.String"/>
+	<field name="NOMBRE1_CLIENTE" class="java.lang.String"/>
+	<field name="NOMBRE2_CLIENTE" class="java.lang.String"/>
+	<field name="APELLIDO1_CLIENTE" class="java.lang.String"/>
+	<field name="APELLIDO2_CLIENTE" class="java.lang.String"/>
+	<field name="CEDULA_CLIENTE" class="java.lang.String"/>
+	<field name="DIREECION_CLIENTE" class="java.lang.String"/>
+	<field name="TELEFONO1_CLIENTE" class="java.lang.String"/>
+	<field name="NOMBRE1_CODEUDOR" class="java.lang.String"/>
+	<field name="NOMBRE2_CODEUDOR" class="java.lang.String"/>
+	<field name="APELLIDO1_CODEUDOR" class="java.lang.String"/>
+	<field name="APELLIDO2_CODEUDOR" class="java.lang.String"/>
+	<field name="CEDULA_CODEUDOR" class="java.lang.String"/>
+	<field name="DIRECCION_CODEUDOR" class="java.lang.String"/>
+	<field name="TELEFONO1_CODEUDOR" class="java.lang.String"/>
+	<field name="GRUPO_AFINIDAD" class="java.math.BigDecimal"/>
+	<field name="FECHA_COMPRA" class="java.sql.Timestamp"/>
+	<group name="GRUPO1" isStartNewColumn="true" isStartNewPage="true" isResetPageNumber="true">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Prevent"/>
+		</groupFooter>
+	</group>
+	<group name="GREUPO2" isStartNewPage="true">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<subreport isUsingCache="true">
+				<reportElement uuid="7a3f160a-475c-46e2-aca0-944e6f734978" key="subreport-1" x="0" y="0" width="697" height="42">
+					<printWhenExpression><![CDATA[( $P{ENDOSO}.equals( "S" )? new Boolean(true): ($F{GRUPO_AFINIDAD}.intValue()==5? new Boolean(true):  new Boolean(false)  ) )]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="NUMERO_CREDITO">
+					<subreportParameterExpression><![CDATA[$P{NUMERO_CREDITO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CEDULA_CLIENTE">
+					<subreportParameterExpression><![CDATA[$P{CEDULA_CLIENTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CEDULA_CLIENTE_MOSTRAR">
+					<subreportParameterExpression><![CDATA[$P{CEDULA_CLIENTE_MOSTRAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CEDULA_CODEUDOR_MOSTRAR">
+					<subreportParameterExpression><![CDATA[$P{CEDULA_CODEUDOR_MOSTRAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NUMERO_CREDITO_MOSTRAR">
+					<subreportParameterExpression><![CDATA[$P{NUMERO_CREDITO_MOSTRAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NUMERO_AUTORIZACION">
+					<subreportParameterExpression><![CDATA[$P{NUMERO_AUTORIZACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ENDOSO">
+					<subreportParameterExpression><![CDATA[$P{ENDOSO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "REP_PAGARE_ENDS.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

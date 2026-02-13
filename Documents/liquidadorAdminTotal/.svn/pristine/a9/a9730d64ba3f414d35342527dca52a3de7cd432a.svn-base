@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<h:outputStylesheet library="css" name="default.css" />
+	<h:outputScript library="js" name="validaciones.js" />
+	<style>
+.ui-blockui {
+	background-color: black;
+}
+
+.ui-blockui-content {
+	background-color: black;
+}
+
+.ui-widget-overlay {
+	background: black;
+	opacity: .8;
+}
+
+.ui-widget-overlay {
+	background-color: black;
+}
+</style>
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-73273572-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</h:head>
+<h:body>
+	<h:form id="form1">
+		<div align="center">
+			<p:panel style="width: 800px;" header="Consultar Servicio"
+				id="formularioingreso">
+				<h:panelGrid columns="2" cellspacing="12" styleClass="panelForm">
+
+
+
+					<h:outputText style="background-color: none; "
+						value="Tipo Solicitante: " />
+					<p:selectOneMenu id="tipoSolicitanteOneMenu"
+						value="#{MBLiquidacionPre.tipoSolicitanteSeleccionado}"
+						style="width: 300px;">
+						<p:ajax listener="#{MBLiquidacionPre.cosultarTipoDocumento}"
+							update="tipoDocumentoOneMenu" />
+						<f:selectItem itemLabel="Seleccione El Tipo Solicitante:"
+							itemValue="" />
+						<f:selectItem itemLabel="PERSONA NATURAL" itemValue="1" />
+						<f:selectItem itemLabel="PERSONA JURIDICA" itemValue="2" />
+					</p:selectOneMenu>
+					<h:outputText style="background-color: none; "
+						value="Tipo Documento: " />
+					<p:selectOneMenu id="tipoDocumentoOneMenu"
+						value="#{MBLiquidacionPre.tipoDocumentoSeleccionado}"
+						style="width: 300px;">
+						<f:selectItem itemLabel="Seleccione el tipo documento:"
+							itemValue="" />
+						<f:selectItems value="#{MBLiquidacionPre.listtipoDocumento}" />
+					</p:selectOneMenu>
+					<h:outputText style="background-color: none; "
+						value="Numero Documento :" />
+					<p:inputText id="dato0" maxlength="14" style="width: 300px;"
+						value="#{MBLiquidacionPre.identificacion}"
+						onkeyup="javascript:this.value = stripNonNumeric(this.value);">
+					</p:inputText>
+				</h:panelGrid>
+				<h:panelGrid columns="2" cellspacing="12" styleClass="panelForm">
+					<p:commandButton value="Crear Solicitud" styleClass="btn btn-green" update="messages"
+						action="#{MBLiquidacionPre.irSolicitud}" id="crearSolicitud">
+					</p:commandButton>
+					<p:commandButton value="Regresar" styleClass="btn btn-green"
+						action="#{MBLiquidacionPre.regresarLiqui}" id="regresar">
+					</p:commandButton>
+				</h:panelGrid>
+				<p:growl id="messages" sticky="true" />
+			</p:panel>
+		</div>
+	</h:form>
+</h:body>
+</html>
+

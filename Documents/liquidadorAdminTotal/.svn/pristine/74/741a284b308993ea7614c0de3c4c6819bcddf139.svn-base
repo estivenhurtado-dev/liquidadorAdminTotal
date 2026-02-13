@@ -1,0 +1,1972 @@
+package com.fenalcovalle.liquidadorAdminTotal.vista.mb;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.DatatypeConverter;
+
+import org.primefaces.context.RequestContext;
+
+import com.fenalcovalle.estandar.modelo.excepciones.BaseException;
+import com.fenalcovalle.estandar.modelo.utilidades.Parametros;
+import com.fenalcovalle.estandar.vista.mb.MBMensajes;
+import com.fenalcovalle.estandar.vista.mb.MBUsuario;
+import com.fenalcovalle.estandar.vista.utilidades.CargarArchivosPropiedadesUtil;
+import com.fenalcovalle.estandar.vista.utilidades.GenerarReportes;
+import com.fenalcovalle.estandar.vista.utilidades.ParametrosWeb;
+import com.fenalcovalle.estandar.vista.utilidades.UtilidadesWeb;
+import com.fenalcovalle.fc.solicitudes.servicios.clientes.bpm.GestionTareasBPM;
+import com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.TProductosFinanciero;
+import com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.TatComisionFenalcheque;
+import com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.TatOtrasPlaza;
+import com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.TatTempLiquidacion;
+import com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.TpagareDetalleLiquidacion;
+import com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.TpagareFechasVencimiento;
+import com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.TpagareMaestroLiquidacion;
+import com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.TpagareTasaInteres;
+import com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.TsolicSolicitud;
+import com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.VOAfiliado;
+import com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.VOAprobacion;
+import com.fenalcovalle.liquidadorAdminTotal.modelo.ejb.entity.liquidadorAdminTotal.VODetalleAprobacion;
+import com.fenalcovalle.liquidadorAdminTotal.vista.delegado.DNConsultasAS400;
+import com.fenalcovalle.liquidadorAdminTotal.vista.delegado.DNConsultasFena;
+import com.fenalcovalle.liquidadorAdminTotal.vista.delegado.DNConsultasOpencard;
+import com.google.gson.Gson;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import utils.system;
+
+@ManagedBean(name = "MBPreLiquidacionBPM")
+@SessionScoped
+public class MBPreLiquidacionBPM implements Serializable {
+
+	MBMensajes mensajes = new MBMensajes();
+
+	DNConsultasOpencard dNConsultasOpencard;
+	TProductosFinanciero ttProductosFinanciero;
+	DNConsultasAS400 dNConsultasAS400;
+
+	DNConsultasFena dNConsultasFena;
+
+	private String nombreApp = "Liquidador Administración Total";
+	private String codigoAfiliado;
+	MBUsuario mBUsuario;
+
+	private String fecha;
+	private String fechaPrimeraCuota;
+
+	private String cedulaGirador;
+	private String nombre;
+	private String semestre;
+	private String programa;
+	private String referencia;
+	private String periodo;
+	private String valorLiquidar;
+	private String plazoMeses;
+
+	private String valorCuotaMostrar;
+
+	private String valorTotalFinanciar;
+
+	private String estudioCredito;
+	private VOAprobacion voAprobacion;
+
+	private String numeroAprobacion;
+
+	private boolean panelAprobacion;
+	private boolean panelAprobacionB;
+
+	private MaestroCuotasVO maestroCuotasVO;
+
+	private String tipoLiquidacionSeleccionado;
+
+	private boolean codigoBarras;
+	private String textoCodigoBarras;
+	SimpleDateFormat df;
+
+	VOAfiliado afiliadoConsultado;
+	TpagareTasaInteres tempPagareTasaInteres;
+	TatComisionFenalcheque tempComisionFenalcheque;
+
+	private List<VODetalleAprobacion> listaDetalleAprobacion;
+	
+	
+
+	// variables bpm
+	private String idSolicitudBpm;
+	private String strUsuarioBpm;
+	private String tareaBPM;
+
+	private String urlProcesoBPM;
+
+//	private String nitBPM;
+
+//	private String numeroIdentificacionBPM;
+
+	private String codigoAfiliadoLiquidadorBPM;
+
+//	private String preNumeroCuotasBPM;
+
+//	private String preTotalNegocioBPM;
+
+//	private String preValorCuotaBPM;
+//	private String nombreGiradorBpm;
+	boolean finalizar;
+	boolean regresarbpm;
+	boolean bpm = false;
+	
+	private String codigoDeAprobacion;
+	TsolicSolicitud tsolicSolicitudEntity; 
+	public MBPreLiquidacionBPM() {
+		try {
+
+			df = new SimpleDateFormat("dd/MMM/yyyy", new Locale("en_EN"));
+
+			pintarParametrosRequest();
+		} catch (Exception exception) {
+			if (exception instanceof BaseException) {
+				MBMensajes mensajes = (MBMensajes) UtilidadesWeb.getManagedBean("MBMensajes");
+				mensajes.mostrarMensaje((BaseException) exception);
+			} else {
+				BaseException BaseException = new BaseException(exception, null, null);
+				MBMensajes mensajes = (MBMensajes) UtilidadesWeb.getManagedBean("MBMensajes");
+				mensajes.mostrarMensaje(BaseException);
+			}
+		}
+	}
+
+	
+	
+	
+	public void pintarParametrosRequest() throws Exception {
+
+		if (mBUsuario == null) {
+
+			mBUsuario = (MBUsuario) UtilidadesWeb.getManagedBean("MBUsuario");
+
+		}
+
+//		if (dNMaestroLiquidacionPre == null) {
+//			dNMaestroLiquidacionPre = new DNMaestroLiquidacionPre();
+//		}
+
+		String valorSucursal = "";
+
+		codigoDeAprobacion = "";
+		// System.out
+		// .println("metodo1
+		// ################################################################");
+
+		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
+				.getRequest();
+
+		/*
+		 * idSolicitudBpm = "5"; strUsuarioBpm = "AHENAO"; tareaBpm =
+		 * "Cupo_Sugerido--1.0--1--Consulta_y_Califica_Datacredito--it1--mainActivityInstance--noLoop&"
+		 * ; //urlRetorno =
+		 * "http://192.168.4.77:8080/fdc/console/homepage?ui=user&locale=es#CaseEditor/jou:Cupo_Sugerido--1.0--1&"
+		 * ; urlRetornoBpm = "#CaseEditor/jou:Cupo_Sugerido--1.0--1&";
+		 * urlRetornoBpm =
+		 * consultarCuposDelegate.getValueFdcPparametro(71L)+urlRetornoBpm;
+		 * System.out.println("urlRetorno: "+urlRetornoBpm);
+		 */
+
+		idSolicitudBpm = request.getParameter("idSolicitud");
+		// idSolicitudBpm = "8163";
+		// System.out.println("idSolicitud: " + idSolicitudBpm);
+		// strUsuarioBpm = "JPANTOJA";
+		strUsuarioBpm = request.getParameter("usuario");
+		// System.out.println("strUsuarioBpm : " + strUsuarioBpm);
+
+		tareaBPM = request.getParameter("tarea");
+		// System.out.println("tareaBPM : " + tareaBPM);
+
+		urlProcesoBPM = "http://bpm:8080/fdc/console/homepage?ui=user&locale=es";
+
+		urlProcesoBPM += request.getParameter("urlProceso");
+		// System.out.println("urlProcesoBPM: " + urlProcesoBPM);
+
+//		nitBPM = request.getParameter("nit");
+//		// System.out.println("nitBPM : " + nitBPM);
+
+//		numeroIdentificacionBPM = request.getParameter("numeroIdentificacion");
+		// System.out.println("numeroIdentificacionBPM: "
+		// + numeroIdentificacionBPM);
+
+		codigoAfiliadoLiquidadorBPM = request.getParameter("codigoAfiliadoLiquidador");
+		// System.out.println("codigoAfiliadoLiquidadorBPM : "
+		// + codigoAfiliadoLiquidadorBPM);
+
+//		preNumeroCuotasBPM = request.getParameter("preNumeroCuotas");
+		// System.out.println(" preNumeroCuotasBPM : " + preNumeroCuotasBPM);
+
+//		preTotalNegocioBPM = request.getParameter("preTotalNegocio");
+		// System.out.println("preTotalNegocioBPM : " + preTotalNegocioBPM);
+
+//		preValorCuotaBPM = request.getParameter("preValorCuota");
+		// System.out.println("preValorCuotaBPM : " + preValorCuotaBPM);
+
+//		nombreGiradorBpm = request.getParameter("nombreGirador");
+		// System.out.println("nombreGiradorBpm: " + nombreGiradorBpm);
+		if (idSolicitudBpm != null && strUsuarioBpm != null) {
+			//cuotasLabel2 = true;
+			bpm = true;
+
+			nombreApp = "Registro Aprobación";
+			autoRellenarFormulario();
+		} else {
+			limpiar();
+	//		tipos = true;
+			String user = mBUsuario.getUsuario().getUserId();
+			if (user != null) {
+
+				for (int i = 0; i < mBUsuario.getUsuario().getTbmValorPropiedadList().size(); i++) {
+
+					if ((mBUsuario.getUsuario().getTbmValorPropiedadList().get(i).getIdPropiedad() + "")
+							.equalsIgnoreCase("3"))
+
+					{
+						valorSucursal = mBUsuario.getUsuario().getTbmValorPropiedadList().get(i).getValor();
+
+						// System.out.println("sucursal " + valorSucursal);
+						break;
+					}
+
+				}
+				RequestContext context = RequestContext.getCurrentInstance();
+//				if (valorSucursal != null) {
+//					String codigoAfiliado2 = dNMaestroLiquidacionPre.consultarCodigoAfiliado(valorSucursal);
+//
+//					// System.out.println("Siempre pasa");
+//
+//					if (codigoAfiliado2.length() > 0) {
+//						codigoAfiliado = codigoAfiliado2;
+//						reporteCodigoAfiliado = codigoAfiliado2;
+//						reportePagoCodigoAfiliado = codigoAfiliado2;
+//						codigoReportes = false;
+//						codigoReportesB = false;
+//						// System.out.println("paso false 777");
+//
+//						context.update("form1");
+//						consultar();
+//					} else {
+//						// System.out.println("paso true 777");
+//
+//						codigoReportes = true;
+//						codigoReportesB = true;
+//						context.update("form1");
+//
+//					}
+//				}
+
+			}
+		}
+
+	}
+	
+private String mensajeRespuestaPagare = "";
+	
+	private boolean botonFinalizar=false;
+
+	
+
+	public void inicarProceso() throws Exception {
+
+		System.out.println("iniciar proceso ");
+//		try {
+			 System.out.println(getToken());
+
+			OkHttpClient client = new OkHttpClient().newBuilder().build();
+			MediaType mediaType = MediaType.parse("application/json");
+			RequestBody body = RequestBody.create(mediaType, "{\r\n    \"idSolicitud\": " + idSolicitudBpm + "\r\n}");
+			Request request = new Request.Builder().url(Parametros.URL_CREACION_PAGARE).method("POST", body)
+					.addHeader("Authorization", "Bearer " + getToken()).addHeader("Content-Type", "application/json")
+					.build();
+			Response response = client.newCall(request).execute();
+			Gson gson = new Gson();
+			com.fenalcovalle.estandar.vista.dto.RespuestaPagareCustomDTO respuestaPagareDto = gson
+					.fromJson(response.body().string(), com.fenalcovalle.estandar.vista.dto.RespuestaPagareCustomDTO.class);
+
+			mensajeRespuestaPagare = respuestaPagareDto.getMessage();
+			
+//			System.out.println(respuestaPagareDto.getData().getDesc());
+			
+			botonFinalizar=true;
+			
+			
+			 if (respuestaPagareDto.getType().equalsIgnoreCase("EXCEPTION_KEY_VALUE")) {
+				 mensajeRespuestaPagare = respuestaPagareDto.getData().getDesc();
+			 }
+
+//		} catch (Exception e) {
+//			mensajeRespuestaPagare = "Ocurrio un al generar el pagare revise el servicio fenalco_integ_pagares";
+//		}
+
+	}
+	
+
+	public String getToken() {
+
+		try {
+
+			byte[] message = (Parametros.USUARIO_SERVICIO_AUTH + ":" + Parametros.CONTRASENA_SERVICIO_AUTH)
+					.getBytes("UTF-8");
+			String encoded = DatatypeConverter.printBase64Binary(message);
+			OkHttpClient client = new OkHttpClient().newBuilder().build();
+			MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+			RequestBody body = RequestBody.create(mediaType, "username=" + Parametros.USUARIO_SERVICIO + "&password="
+					+ Parametros.CONTRASENA_SERVICIO + "&grant_type=" + Parametros.GRANT_TYPE + "");
+			Request request = new Request.Builder().url(Parametros.URL_SERVICIO_AUTH).method("POST", body)
+					.addHeader("Content-Type", "application/x-www-form-urlencoded")
+					.addHeader("Authorization", "Basic " + encoded).build();
+			Response response = client.newCall(request).execute();
+
+			//
+			Gson gson = new Gson();
+			com.fenalcovalle.estandar.vista.dto.Token token = gson.fromJson(response.body().string(),
+					com.fenalcovalle.estandar.vista.dto.Token.class);
+			//
+			//
+			return token.getAccess_token();
+
+		} catch (Exception e) {
+			mensajeRespuestaPagare = "Ocurrio un al generar el token revise el servicio fenalco_integ_pagares";
+			return "Ocurrio un al generar el token revise el servicio fenalco_integ_pagares";
+		}
+	}
+	
+	
+	
+	
+	
+	public void autoRellenarFormulario() throws Exception {
+		
+		codigoAfiliado=codigoAfiliadoLiquidadorBPM;
+		
+		consultar();
+		
+		
+		if (dNConsultasFena == null) {
+			dNConsultasFena = new DNConsultasFena();
+		}
+		
+		 tsolicSolicitudEntity = dNConsultasFena.consultarTsolicSolicitudPorId(new BigDecimal(idSolicitudBpm));
+		
+		SimpleDateFormat df = new SimpleDateFormat("dd/MMM/yyyy", new Locale("en_EN"));
+		
+		if (tsolicSolicitudEntity!=null) {
+		
+			cedulaGirador=tsolicSolicitudEntity.getNumeroDocumentoEst();
+			nombre=tsolicSolicitudEntity.getNombresEst()+" "+tsolicSolicitudEntity.getApellidosEst();
+			semestre=tsolicSolicitudEntity.getSemestre();
+					programa=tsolicSolicitudEntity.getNombreCarrera();
+					referencia=tsolicSolicitudEntity.getCodigoEstudiante();
+					periodo=tsolicSolicitudEntity.getAnioCursado();
+					valorLiquidar=tsolicSolicitudEntity.getAtributo9();
+					
+					fecha=df.format(		tsolicSolicitudEntity.getFechaCreacion());			
+					plazoMeses=tsolicSolicitudEntity.getAtributo7();
+		
+		
+		}
+		
+		
+		liquidar();
+		
+//		// panelConsulta = false;
+//		// panelResultados = true;
+//		cedulaGirador = numeroIdentificacionBPM;
+//		nombreGirador = nombreGiradorBpm;
+//		valorLiquidar = preTotalNegocioBPM;
+//		plazoMeses = preNumeroCuotasBPM;
+//		cuotaF = preValorCuotaBPM;
+//		// System.out.println("----------------precodigoAfiliadoLiquidadorBPM :
+//		// "
+//		// + codigoAfiliadoLiquidadorBPM);
+//		codigoAfiliado = codigoAfiliadoLiquidadorBPM;
+//		cuotasLabel = true;
+//		crearSol = false;
+//		tipos = false;
+//		tipoSolicitanteSeleccionado = "1";
+//
+//		tipoDocumentoSeleccionado = "1";
+//
+//		consultar();
+//		liquidar();
+	}
+	
+	public void regresarBPM() {
+		try {
+
+			// System.out.println("regresar_action");
+
+			ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+			// FacesContext.getCurrentInstance().getExternalContext()
+			// .invalidateSession();
+
+			externalContext.redirect(urlProcesoBPM);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	
+	public void finalizarBPM() {
+		try {
+
+			// System.out.println("finalizar_action");
+
+			GestionTareasBPM wsBpm = new GestionTareasBPM();
+			wsBpm.gestionarTarea(strUsuarioBpm, strUsuarioBpm, GestionTareasBPM.ACCION_FINALIZAR_TAREA, tareaBPM);
+
+			// Redireccionar al BPM
+			ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+			// FacesContext.getCurrentInstance().getExternalContext()
+
+			externalContext.redirect(urlProcesoBPM);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+
+	public void procesarCodigoBarras() {
+		System.out.println("procesando codigo bar");
+
+		SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+		if (textoCodigoBarras != null) {
+			if (textoCodigoBarras.length() > 0) {
+				System.out.println("dato " + tipoLiquidacionSeleccionado);
+				if (tipoLiquidacionSeleccionado != null) {
+
+					if (tipoLiquidacionSeleccionado.equalsIgnoreCase("liqui1")) {
+						if (textoCodigoBarras.length() == 54) {
+							System.out.println("paso 54");
+							String parte1 = textoCodigoBarras.substring(3, 16);
+
+							String parte2 = textoCodigoBarras.substring(20, 30);
+
+							String parte3 = textoCodigoBarras.substring(34, 44);
+
+							String parte4 = textoCodigoBarras.substring(46, 54);
+							valorLiquidar = Integer.parseInt(parte3) + "";
+							referencia = Integer.parseInt(parte2) + "";
+							String anio = parte4.substring(0, 4);
+							String mes = parte4.substring(4, 6);
+							String dia = parte4.substring(6, 8);
+
+							SimpleDateFormat formatoFechaBarra = new SimpleDateFormat("dd/MM/yyyy");
+							String fecha = dia + "/" + mes + "/" + anio;
+
+							try {
+
+								Date fechaCodigo = formatoFechaBarra.parse(fecha);
+
+								Date hoy = new Date();
+
+								if (fechaCodigo.compareTo(hoy) != 1) {
+
+									mensajes.mostrarMensaje(
+											"El codigo de barras escaneado presenta una vigencia antigua.", 2);
+
+								}
+							} catch (Exception e) {
+								System.out.println("Error: Formateando Fecha Codigo de barras");
+							}
+
+						}
+					} else if (tipoLiquidacionSeleccionado.equalsIgnoreCase("liqui2")) {
+						if (textoCodigoBarras.length() == 52) {
+							System.out.println("paso 52");
+							String parte1 = textoCodigoBarras.substring(3, 16);
+
+							String parte2 = textoCodigoBarras.substring(20, 30);
+
+							String parte3 = textoCodigoBarras.substring(34, 42);
+
+							String parte4 = textoCodigoBarras.substring(46, 54);
+							valorLiquidar = Integer.parseInt(parte3) + "";
+							referencia = Integer.parseInt(parte2) + "";
+
+							String anio = parte4.substring(0, 4);
+							String mes = parte4.substring(4, 6);
+							String dia = parte4.substring(6, 8);
+							SimpleDateFormat formatoFechaBarra = new SimpleDateFormat("dd/MM/yyyy");
+							String fecha = dia + "/" + mes + "/" + anio;
+
+							try {
+
+								Date fechaCodigo = formatoFechaBarra.parse(fecha);
+
+								Date hoy = new Date();
+
+								if (fechaCodigo.compareTo(hoy) != 1) {
+
+									mensajes.mostrarMensaje(
+											"El codigo de barras escaneado presenta una vigencia antigua.", 2);
+
+								}
+							} catch (Exception e) {
+								System.out.println("Error: Formateando Fecha Codigo de barras");
+							}
+						}
+					}
+				} else {
+					mensajes.mostrarMensaje("Debe seleccionar un tipo de liquidación.", 2);
+				}
+
+			}
+		}
+
+	}
+
+	public void aprobarLiquidacion() throws Exception {
+		// maestroCuotasVO
+
+		if (dNConsultasFena == null) {
+			dNConsultasFena = new DNConsultasFena();
+		}
+
+		if (mBUsuario == null) {
+
+			mBUsuario = (MBUsuario) UtilidadesWeb.getManagedBean("MBUsuario");
+
+		}
+		TpagareMaestroLiquidacion consultaCodigo = dNConsultasFena.buscarNumeroAprobacion(numeroAprobacion);
+		if (consultaCodigo != null) {
+			mensajes.mostrarMensaje("El número de aprobación ya esta registrado.", 2);
+		} else {
+
+//			System.out.println("datos------------");
+//			System.out.println(voAprobacion.getValorTotal());
+//			System.out.println(valorTotalFinanciar);
+//			System.out.println(voAprobacion.getNumeroCuotas());
+//			System.out.println(plazoMeses);
+			if (voAprobacion.getValorTotal().equalsIgnoreCase(valorTotalFinanciar)
+					&& voAprobacion.getNumeroCuotas().equalsIgnoreCase(plazoMeses)) {
+
+				CargarArchivosPropiedadesUtil prop = new CargarArchivosPropiedadesUtil();
+
+				String productoCredito = prop.getProperty("parametros.properties", "PRODUCTO_CREDITO_AT");
+
+				List<Long> afiliadosMakroPg = new ArrayList<Long>();
+
+				afiliadosMakroPg = prop.getListProperty("parametros.properties", "COD_AFILIADOS_MAKRO_PG", ",");
+
+				String usuario = mBUsuario.getUsuario().getUserId();
+
+				TpagareMaestroLiquidacion registrar = new TpagareMaestroLiquidacion();
+
+				registrar.setNumeroAprobacion(numeroAprobacion);
+				registrar.setTasaInteres(maestroCuotasVO.getValorIntereses());
+				registrar.setTotalNegocio(maestroCuotasVO.getMonto());
+				registrar.setFecha(new Date());
+
+				registrar.setUsuario(usuario);
+				registrar.setRsecod("3");
+				registrar.setSeccional("0");
+				registrar.setAfiliado(codigoAfiliado);
+				registrar.setSucursal("0");
+				registrar.setIdProd("3");
+				if (afiliadosMakroPg.contains(new Long(codigoAfiliado))) {
+					registrar.setAtributo1("0");
+
+				} else {
+					registrar.setAtributo1(semestre);
+				}
+
+				registrar.setAtributo2(plazoMeses);
+				registrar.setAtributo3(maestroCuotasVO.getValorOtrasPlazas());
+				registrar.setAtributo4(maestroCuotasVO.getValorComisionFCH());
+				registrar.setAtributo5("0");
+				registrar.setReferencia1(cedulaGirador.replace(".", ""));
+				registrar.setReferencia2(nombre);
+				registrar.setReferencia3(programa);
+				registrar.setReferencia4("Pagare");
+				registrar.setReferencia5(voAprobacion.getCedulaGirador());
+				registrar.setReferencia6(voAprobacion.getNombreGirador());
+				registrar.setReferencia7(referencia);
+				registrar.setReferencia8(periodo);
+				if (afiliadosMakroPg.contains(new Long(codigoAfiliado))) {
+					registrar.setReferencia11(df.parse(fechaPrimeraCuota));
+
+				} else {
+					registrar.setReferencia11(maestroCuotasVO.getFechaVencimiento());
+				}
+
+				TpagareMaestroLiquidacion tempTpagareMaestroLiquidacion = dNConsultasFena.registrarMaestro(registrar);
+
+				if (tempTpagareMaestroLiquidacion != null) {
+
+					TpagareDetalleLiquidacion tempTpagareDetalleLiquidacion = null;
+					for (int i = 0; i < maestroCuotasVO.getCuotas().size(); i++) {
+
+						tempTpagareDetalleLiquidacion = new TpagareDetalleLiquidacion();
+						tempTpagareDetalleLiquidacion.setIdMali(tempTpagareMaestroLiquidacion.getIdMali());
+						tempTpagareDetalleLiquidacion.setNumCuota(maestroCuotasVO.getCuotas().get(i).getNoCuota() + "");
+						tempTpagareDetalleLiquidacion
+								.setValorCapital(maestroCuotasVO.getCuotas().get(i).getValorCapital() + "");
+						tempTpagareDetalleLiquidacion
+								.setValorInteres(maestroCuotasVO.getCuotas().get(i).getValorIntereses() + "");
+						tempTpagareDetalleLiquidacion
+								.setValorCuota(maestroCuotasVO.getCuotas().get(i).getTotalCuotas() + "");
+						tempTpagareDetalleLiquidacion
+								.setSaldoCapital(maestroCuotasVO.getCuotas().get(i).getSaldoCapital() + "");
+
+						tempTpagareDetalleLiquidacion
+								.setFechaVencimiento(maestroCuotasVO.getCuotas().get(i).getFechaVencimiento() + "");
+						tempTpagareDetalleLiquidacion.setNumeroPagare(numeroAprobacion);
+						tempTpagareDetalleLiquidacion
+								.setValorCapital(maestroCuotasVO.getCuotas().get(i).getValorCapital() + "");
+						tempTpagareDetalleLiquidacion
+								.setAtributo1(maestroCuotasVO.getCuotas().get(i).getComisionFenalcheque() + "");
+						tempTpagareDetalleLiquidacion
+								.setAtributo2(maestroCuotasVO.getCuotas().get(i).getOtrasPlazas() + "");
+						tempTpagareDetalleLiquidacion
+								.setAtributo3(maestroCuotasVO.getCuotas().get(i).getPortesTelex() + "");
+						tempTpagareDetalleLiquidacion.setAtributo4("0");
+						tempTpagareDetalleLiquidacion
+								.setAtributo5(maestroCuotasVO.getCuotas().get(i).getComisionTransferencia() + "");
+						dNConsultasFena.registrarDetalle(tempTpagareDetalleLiquidacion);
+
+					}
+
+					TatTempLiquidacion tempTatTempLiquidacion = new TatTempLiquidacion();
+					tempTatTempLiquidacion.setAfiliado(codigoAfiliado);
+					tempTatTempLiquidacion.setIdMali(tempTpagareMaestroLiquidacion.getIdMali());
+
+					dNConsultasFena.registrarTemporalReporteUAO(tempTatTempLiquidacion);
+				}
+
+				tsolicSolicitudEntity.setAtributo4(numeroAprobacion);
+				
+				dNConsultasFena.modificarTsolicSolicitud(tsolicSolicitudEntity);
+				
+				
+				
+				mensajes.mostrarMensaje("Se ha registrado con éxito la aprobación N°: " + numeroAprobacion, 1);
+				
+				panelAprobacionB=true;
+
+			} else {
+				panelAprobacionB=false;
+				mensajes.mostrarMensaje(
+						"El número de autorización, el valor, la cedula, las cuotas son inválidos o no corresponden a la negociación - por favor verifique los datos ingresados",
+						2);
+			}
+
+		}
+
+	}
+
+	public String consultar() throws Exception {
+
+		if (dNConsultasFena == null) {
+			dNConsultasFena = new DNConsultasFena();
+		}
+
+//		if (dNConsultasAS400 == null) {
+//			dNConsultasAS400 = new DNConsultasAS400();
+//		}
+
+		if (dNConsultasOpencard == null) {
+			dNConsultasOpencard = new DNConsultasOpencard();
+		}
+		limpiar();
+		panelAprobacion = false;
+		panelAprobacionB = false;
+		if (codigoAfiliado.length() == 8) {
+
+			String aficodscc = codigoAfiliado.charAt(0) + "";
+			String aficon = codigoAfiliado.substring(1, 6);
+			String afinumsuc = codigoAfiliado.substring(6, 8);
+
+//			afiliadoConsultado = dNConsultasAS400.consultarAfiliadoCupo(aficodscc, aficon, afinumsuc);
+//			System.out.println("DATOS AS 400");
+//
+//			if (afiliadoConsultado != null) {
+//				System.out.println(afiliadoConsultado.getNombre());
+//				System.out.println(afiliadoConsultado.getSector());
+//
+//			}
+
+			if (afiliadoConsultado == null) {
+
+				afiliadoConsultado = dNConsultasOpencard.consultarAfiliado(codigoAfiliado);
+				System.out.println("DATOS OPENCARD");
+				if (afiliadoConsultado != null) {
+					System.out.println(afiliadoConsultado.getNombre());
+					System.out.println(afiliadoConsultado.getSector());
+
+				}
+			}
+
+			if (afiliadoConsultado != null) {
+				System.out.println("PASO VALIDACION");
+
+				TatComisionFenalcheque tempComisionFenalcheque = dNConsultasFena
+						.buscarComisionFenalCheque(codigoAfiliado);
+
+				if (tempComisionFenalcheque != null) {
+
+					if (tempComisionFenalcheque.getCodigoBarras().equalsIgnoreCase("S")) {
+						codigoBarras = true;
+					} else {
+						codigoBarras = false;
+					}
+
+					tempPagareTasaInteres = dNConsultasFena.buscarTasaInteresPagare(codigoAfiliado);
+
+					if (tempPagareTasaInteres != null) {
+
+						String primeraCuota = incrementarMesFecha(new Date());
+
+						Date fechaDia = new Date();
+
+						fecha = df.format(fechaDia);
+
+						fechaPrimeraCuota = primeraCuota;
+						new Timestamp(df.parse(primeraCuota).getTime());
+
+						// ttProductosFinanciero =
+						// dNTProductosFinanciero.buscarporID(codigoAfiliado);
+
+						limpiar();
+
+						//navegarLiquidaror();
+
+					} else {
+						mensajes.mostrarMensaje(
+								"No hay parametrizacion de la TASA INTERES para el codigo: " + codigoAfiliado, 2);
+
+					}
+
+				} else {
+					mensajes.mostrarMensaje(
+							"No hay parametrizacion de la COMISION FENALCHEQUE para el codigo: " + codigoAfiliado, 2);
+				}
+
+			} else {
+				mensajes.mostrarMensaje("No se encontró afiliado con el código ingresado.", 2);
+
+			}
+
+		} else {
+
+			mensajes.mostrarMensaje("El código del afiliado debe ser de 8 digitos.", 2);
+
+		}
+
+		return null;
+	}
+
+	public void navegarLiquidaror() {
+
+		try {
+			FacesContext context = FacesContext.getCurrentInstance();
+			ExternalContext extContext = context.getExternalContext();
+			String url2 = extContext.encodeActionURL(
+					context.getApplication().getViewHandler().getActionURL(context, "/jsp/liquidadorAdminTotal.xhtml"));
+			extContext.redirect(url2);
+		} catch (Exception exception) {
+			if (exception instanceof BaseException) {
+
+				mensajes.mostrarMensaje((BaseException) exception);
+			} else {
+				BaseException BaseException = new BaseException(exception, null, null);
+				mensajes.mostrarMensaje(BaseException);
+			}
+		}
+
+	}
+
+	public void consultarAprobacion() throws Exception {
+		if (dNConsultasOpencard == null) {
+			dNConsultasOpencard = new DNConsultasOpencard();
+		}
+
+		if (dNConsultasFena == null) {
+			dNConsultasFena = new DNConsultasFena();
+		}
+
+		TpagareMaestroLiquidacion consultaCodigo = dNConsultasFena.buscarNumeroAprobacion(numeroAprobacion);
+		if (consultaCodigo != null) {
+			mensajes.mostrarMensaje("El número de aprobación ya esta registrado.", 2);
+
+		} else {
+
+			voAprobacion = dNConsultasOpencard.consultarAprobacion(numeroAprobacion, codigoAfiliado);
+
+			if (voAprobacion != null) {
+
+				if (voAprobacion.getCodigoAfiliado().equalsIgnoreCase(codigoAfiliado)) {
+					listaDetalleAprobacion = dNConsultasOpencard.consultarDetalleAprobacion(numeroAprobacion,
+							codigoAfiliado);
+					panelAprobacion = true;
+
+				} else {
+					mensajes.mostrarMensaje("No existe esta aprobación - o no pertenece al afiliado no "
+							+ codigoAfiliado + " - " + afiliadoConsultado.getNombre() + ".", 2);
+
+				}
+
+			} else {
+				mensajes.mostrarMensaje("No existe esta aprobación - o no pertenece al afiliado no " + codigoAfiliado
+						+ " - " + afiliadoConsultado.getNombre() + ".", 2);
+
+			}
+		}
+
+	}
+
+	public void regresarLiquidar() {
+
+		try {
+			voAprobacion = null;
+			listaDetalleAprobacion = null;
+			panelAprobacionB = false;
+			panelAprobacion = false;
+			FacesContext context = FacesContext.getCurrentInstance();
+			ExternalContext extContext = context.getExternalContext();
+			String url2 = extContext.encodeActionURL(
+					context.getApplication().getViewHandler().getActionURL(context, "/jsp/liquidadorAdminTotal.xhtml"));
+			extContext.redirect(url2);
+		} catch (Exception exception) {
+			if (exception instanceof BaseException) {
+
+				mensajes.mostrarMensaje((BaseException) exception);
+			} else {
+				BaseException BaseException = new BaseException(exception, null, null);
+				mensajes.mostrarMensaje(BaseException);
+			}
+		}
+
+	}
+
+	
+	public void navegarAprobacion() {
+
+		if (valorCuotaMostrar != null) {
+
+			try {
+				FacesContext context = FacesContext.getCurrentInstance();
+				ExternalContext extContext = context.getExternalContext();
+				String url2 = extContext.encodeActionURL(context.getApplication().getViewHandler().getActionURL(context,
+						"/jsp/liquidadorBPMAprobacion.xhtml"));
+				extContext.redirect(url2);
+			} catch (Exception exception) {
+				if (exception instanceof BaseException) {
+
+					mensajes.mostrarMensaje((BaseException) exception);
+				} else {
+					BaseException BaseException = new BaseException(exception, null, null);
+					mensajes.mostrarMensaje(BaseException);
+				}
+			}
+		} else
+
+		{
+
+			mensajes.mostrarMensaje("Debe liquidar primero para poder pasar al paso de aprobación.", 2);
+		}
+	}
+
+	public void regresar() {
+
+		try {
+			FacesContext context = FacesContext.getCurrentInstance();
+			ExternalContext extContext = context.getExternalContext();
+			String url2 = extContext.encodeActionURL(context.getApplication().getViewHandler().getActionURL(context,
+					"/jsp/liquidadorAdminTotalConsulta.xhtml"));
+			extContext.redirect(url2);
+		} catch (Exception exception) {
+			if (exception instanceof BaseException) {
+
+				mensajes.mostrarMensaje((BaseException) exception);
+			} else {
+				BaseException BaseException = new BaseException(exception, null, null);
+				mensajes.mostrarMensaje(BaseException);
+			}
+		}
+
+	}
+
+	public void limpiar() {
+		cedulaGirador = null;
+		nombre = null;
+		semestre = null;
+		programa = null;
+		referencia = null;
+		periodo = null;
+		valorLiquidar = null;
+		plazoMeses = null;
+		valorCuotaMostrar = null;
+		tipoLiquidacionSeleccionado = null;
+		textoCodigoBarras = null;
+
+	}
+
+	public String liquidar() throws Exception {
+
+		CargarArchivosPropiedadesUtil prop = new CargarArchivosPropiedadesUtil();
+
+		String productoCredito = prop.getProperty("parametros.properties", "PRODUCTO_CREDITO_AT");
+
+		List<Long> afiliadosMakroPg = new ArrayList<Long>();
+
+		afiliadosMakroPg = prop.getListProperty("parametros.properties", "COD_AFILIADOS_MAKRO_PG", ",");
+
+		if (afiliadosMakroPg.contains(new Long(codigoAfiliado))) {
+
+			if (valorLiquidar.length() > 0 && plazoMeses.length() > 0) {
+
+				semestre = "0";
+
+				valorLiquidar = valorLiquidar.replace(".", "");
+				cedulaGirador = cedulaGirador.replace(".", "");
+
+				maestroCuotasVO = generarTablaAmortizacion(new Timestamp(df.parse(fechaPrimeraCuota).getTime()),
+						valorLiquidar, plazoMeses);
+
+			} else {
+				mensajes.mostrarMensaje("El valor a liquidar y plazo son obligatorios. ", 2);
+			}
+		} else {
+
+			if (valorLiquidar.length() > 0 && plazoMeses.length() > 0 && cedulaGirador.length() > 0
+					&& nombre.length() > 0 && semestre.length() > 0 && programa.length() > 0) {
+
+				valorLiquidar = valorLiquidar.replace(".", "");
+				cedulaGirador = cedulaGirador.replace(".", "");
+
+				maestroCuotasVO = generarTablaAmortizacion(new Timestamp(df.parse(fechaPrimeraCuota).getTime()),
+						valorLiquidar, plazoMeses);
+
+			} else {
+				mensajes.mostrarMensaje(
+						"La Cedula del girador, el nombre del girador, el semestre , el programa , valor a liquidar y plazo son obligatorios. ",
+						2);
+			}
+		}
+
+		return null;
+
+	}
+
+	public void setToBean() {
+		System.out.println("paso");
+		System.out.println(valorLiquidar);
+
+	}
+
+	public MaestroCuotasVO generarTablaAmortizacion(Timestamp fechaLiquidacion, String tempvalorLiquidar,
+			String tempplazo) throws Exception {
+
+		Double valorLiquidar = Double.parseDouble(tempvalorLiquidar);
+
+		Double Comision = 0.0D;
+
+		int plazo = Integer.parseInt(tempplazo);
+
+		if (dNConsultasFena == null) {
+			dNConsultasFena = new DNConsultasFena();
+		}
+
+		if (dNConsultasFena == null) {
+			dNConsultasFena = new DNConsultasFena();
+		}
+
+		Double totalNegocio = 0.0;
+		CuotasVO cuota1 = new CuotasVO();
+		Double valorTotalIntereses = 0.0;
+		Double valorTotalComisionFCH = 0.0;
+		Double valorTotalOtrasPlazas = 0.0;
+		Double valorAval = 0.0;
+		Double valorLiq = valorLiquidar;
+		Double valorComisionTransferencia = 0.0;
+
+		MaestroCuotasVO resultado = new MaestroCuotasVO();
+
+		String fecha = df.format(fechaLiquidacion);
+
+		Double factorIva = 0.0;
+
+		CargarArchivosPropiedadesUtil prop = new CargarArchivosPropiedadesUtil();
+
+		String productoCredito = prop.getProperty("parametros.properties", "PRODUCTO_CREDITO_AT");
+		factorIva = Double.parseDouble(prop.getProperty("parametros.properties", "FACTOR_IVA"));
+
+		Double comisTransferencia = 0.0;
+
+		comisTransferencia = dNConsultasFena.ComisionTransferenciaxProducto(productoCredito);
+
+		System.out.println("4 / 1000 :" + comisTransferencia);
+
+		Double comisionFCH = null;
+		Double fondoSolidaridad = null;
+		Double IdTcfc = null;
+		Double comision = null;
+
+		String tasaPreferencial = "";
+
+		TatComisionFenalcheque tempComisionFenalcheque = dNConsultasFena.buscarComisionFenalCheque(codigoAfiliado);
+		if (tempComisionFenalcheque != null) {
+			comisionFCH = Double.parseDouble(tempComisionFenalcheque.getValor());
+			fondoSolidaridad = Double.parseDouble(tempComisionFenalcheque.getFondoSolidaridad());
+
+			IdTcfc = Double.parseDouble(tempComisionFenalcheque.getIdTcfc());
+			tasaPreferencial = tempComisionFenalcheque.getTasaPreferencial();
+
+			comision = Double.parseDouble(tempComisionFenalcheque.getComision());
+		} else {
+			mensajes.mostrarMensaje(
+					"No hay parametrizacion de la COMISION FENALCHEQUE para el codigo: " + codigoAfiliado, 2);
+		}
+
+		TatOtrasPlaza tempTatOtrasPlaza = dNConsultasFena.consultarOtrasPlazas();
+
+		Double porcentajeAdicion = null;
+		Double iva = null;
+		Double valorTope = null;
+		Double portesTelex = null;
+
+		if (tempTatOtrasPlaza != null) {
+
+			porcentajeAdicion = Double.parseDouble(tempTatOtrasPlaza.getPorcentajeAdicion());
+
+			iva = Double.parseDouble(tempTatOtrasPlaza.getIva());
+
+			valorTope = Double.parseDouble(tempTatOtrasPlaza.getValorTope());
+
+			portesTelex = Double.parseDouble(tempTatOtrasPlaza.getAdicionaPortesTelex());
+
+		} else {
+
+			mensajes.mostrarMensaje("No hay parametrizacion en TAT_OTRAS_PLAZAS", 2);
+
+		}
+
+		valorLiquidar = valorLiquidar + valorLiquidar * fondoSolidaridad.doubleValue() / 100.0;
+		valorLiq = valorLiq + valorLiq * fondoSolidaridad.doubleValue() / 100.0;
+		valorAval = valorLiq * comisionFCH.doubleValue() / 100.0;
+		valorLiq = valorLiq + valorAval;
+		valorComisionTransferencia = (double) Math.round((valorLiquidar * comisTransferencia / 100.0) / factorIva);
+		Double valorComisXcuota = (double) Math.round(valorComisionTransferencia / plazo);
+
+		resultado.setMonto(imprimirDouble(valorLiquidar.doubleValue(), null));
+
+		Double interes = null;
+		if (tasaPreferencial.equalsIgnoreCase("N")) {
+
+			TpagareTasaInteres tempPagareTasaInteres = dNConsultasFena.buscarTasaInteresPagare(codigoAfiliado);
+
+			if (tempPagareTasaInteres != null) {
+
+				interes = Double.parseDouble(tempPagareTasaInteres.getValor());
+
+			} else {
+				mensajes.mostrarMensaje("No hay parametrizacion de la TASA INTERES para el codigo: " + codigoAfiliado,
+						2);
+
+			}
+
+		}
+
+		Date fechaVencimiento = null;
+
+		resultado.setTasaInteres(interes.doubleValue());
+
+		List<CuotasVO> cuotas = new ArrayList<CuotasVO>();
+
+		Double valorIntereses = valorLiq * interes.doubleValue() / 100;
+		Double valorCuota = calcularCuota(valorLiq.intValue(), interes.doubleValue() / 100, plazo);
+
+		Double valorCuotaEnviar = (double) Math.round(valorCuota);
+		DecimalFormat dec = new DecimalFormat("#");
+		dec.setMaximumFractionDigits(18);
+		String valorcuotaEnviarString = dec.format(valorCuotaEnviar);
+
+		valorCuotaMostrar = ponerPuntos(valorcuotaEnviarString);
+
+		BigDecimal x = (new BigDecimal(valorCuotaMostrar.replace(".", ""))).add(new BigDecimal("11900"));
+
+		valorCuotaMostrar = ponerPuntos(x.toString());
+
+		Double valorCapital = valorCuota - valorIntereses;
+
+		TpagareFechasVencimiento tempTpagareFechasVencimiento = dNConsultasFena.buscarFechasVencimientoPagare();
+
+		Date date = new java.util.Date();
+		Timestamp hoy = new Timestamp(date.getTime());
+
+		if (tempTpagareFechasVencimiento != null) {
+
+			fechaVencimiento = tempTpagareFechasVencimiento.getFechaVencimiento();
+
+			resultado.setFechaVencimiento(fechaVencimiento);
+
+		} else {
+			mensajes.mostrarMensaje("No hay fecha de vencimiento configurada", 2);
+		}
+
+		int dias = calcularDiasFechas(new Timestamp(System.currentTimeMillis()), new Date(fechaVencimiento.getTime()));
+
+		double intereses = dias * (interes.doubleValue() / 100) / 30 * valorLiq;
+
+		cuota1.setTotalCuotas(imprimirDouble((valorCapital + intereses + valorComisXcuota), null));
+		cuota1.setValorIntereses(imprimirDouble(intereses, null));
+		cuota1.setFechaVencimiento(df.format(fechaVencimiento));
+
+		cuota1.setNoCuota(1);
+		cuota1.setSaldoCapital(imprimirDouble((valorLiq - valorCapital), null));
+		totalNegocio += Double.parseDouble(cuota1.getTotalCuotas());
+		cuota1.setValorCapital(imprimirDouble(valorCapital, null));
+		cuota1.setComisionTransferencia(imprimirDouble(valorComisXcuota, null));
+		// Se adiciona la primera cuota a la lista de cuotas
+		cuotas.add(0, cuota1);
+
+		double totalComisXcuota = valorComisXcuota;
+		/* Calculamos las cuotas restantes */
+		for (int i = 1; i < plazo; i++) {
+
+			valorIntereses = Double.parseDouble(cuotas.get(i - 1).getSaldoCapital()) * interes.doubleValue() / 100;
+			CuotasVO cuo = new CuotasVO();
+			cuo.setNoCuota(i + 1);
+			cuo.setValorCapital(imprimirDouble((valorCuota - valorIntereses), null));
+			cuo.setValorIntereses(imprimirDouble(valorIntereses, null));
+			cuo.setTotalCuotas(imprimirDouble(valorCuota, null));
+			totalNegocio += Double.parseDouble(cuo.getTotalCuotas());
+			cuo.setSaldoCapital(imprimirDouble((Double.parseDouble(cuotas.get(i - 1).getSaldoCapital())
+					- Double.parseDouble(cuo.getValorCapital())), null));
+
+			// Calculamos la fecha de vencimiento aumentando en un mes la fecha
+			// de vencimiento de la cuota anterior
+			if (validarFechaAnterior(df.parse(cuotas.get(i - 1).getFechaVencimiento()))) {
+				if (i != 1) {
+					cuo.setFechaVencimiento(
+							incrementarDosMesesFecha(df.parse(cuotas.get(i - 2).getFechaVencimiento())));
+				} else {
+					cuo.setFechaVencimiento(incrementarMesFecha(df.parse(cuotas.get(i - 1).getFechaVencimiento())));
+				}
+			} else {
+				cuo.setFechaVencimiento(incrementarMesFecha(df.parse(cuotas.get(i - 1).getFechaVencimiento())));
+			}
+			// Si es la ultima cuota se redondea a cero el saldo a capital
+			if (i == (plazo - 1)) {
+				cuo.setSaldoCapital("0");
+			}
+			cuotas.add(i, cuo);
+		}
+
+		// Se le aplica la comision de fenalcheque al valor de cada cuota
+		double tempFCH = 0.0;
+		// tempFCH=Math.round(valorComisionTransferencia/plazo);
+		tempFCH = Math.round(valorAval / plazo);
+		for (CuotasVO c : cuotas) {
+			totalComisXcuota += totalComisXcuota;
+
+			// tempFCH = (Double.parseDouble(c.getTotalCuotas()) *
+			// (comisionFCH.doubleValue() / 100) * iva.doubleValue());
+			c.setTotalCuotas(imprimirDouble(Double.parseDouble(c.getTotalCuotas()), null));
+
+			// Le asignamos el valor de la comision fch a cada cuota
+			c.setComisionFenalcheque(imprimirDouble(tempFCH, null));
+			// asignamos la comision de transferencia//
+			c.setComisionTransferencia(imprimirDouble(valorComisXcuota, null));
+
+			// Le asignamos 0 a portes y telex
+			c.setOtrasPlazas("0");
+			c.setPortesTelex("0");
+
+			valorTotalComisionFCH += tempFCH;
+			valorTotalIntereses += Double.parseDouble(c.getValorIntereses());
+		}
+
+		// Asignamos los valores al objeto que se enviara como resultado
+		resultado.setCuotas(cuotas);
+
+		resultado.setValorComisionFCH(imprimirDouble(valorTotalComisionFCH, null));
+		resultado.setValorIntereses(imprimirDouble(valorTotalIntereses, null));
+		resultado.setValorOtrasPlazas(imprimirDouble(valorTotalOtrasPlazas, null));
+		resultado.setValorComisionTransferencia(imprimirDouble(valorComisionTransferencia, null));
+
+		resultado.setValorAval(imprimirDouble(valorAval, null));
+
+		estudioCredito = imprimirDouble(((valorLiquidar / comision) - valorLiquidar), null);
+		resultado.setValorComisionFCH(estudioCredito);
+		valorTotalFinanciar = imprimirDouble(((valorLiquidar / comision)), null);
+
+		return resultado;
+
+	}
+
+	public String imprimirDouble(double valor, String patron) {
+
+		return Math.round(valor) + "";
+	}
+
+	private int calcularDiasFechas(Timestamp fechaInicial, Date fechaFinal) {
+		return (int) (((fechaFinal.getTime() - fechaInicial.getTime()) / 86400000) + 1);
+	}
+
+	public String incrementarDosMesesFecha(Date fecha) {
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(fecha);
+		int mesActual = gc.get(GregorianCalendar.MONTH);
+		if (mesActual == GregorianCalendar.NOVEMBER) {
+			mesActual = GregorianCalendar.JANUARY;
+			gc.set(GregorianCalendar.YEAR, gc.get(GregorianCalendar.YEAR) + 1);
+		} else if (mesActual == GregorianCalendar.DECEMBER && gc.get(GregorianCalendar.DATE) > 28) {
+			mesActual += 2;
+			if (esBisiesto(gc.get(GregorianCalendar.YEAR) + "")) {
+				gc.set(GregorianCalendar.DATE, 29);
+			} else {
+				gc.set(GregorianCalendar.DATE, 28);
+			}
+		} else {
+			mesActual += 2;
+		}
+		gc.set(GregorianCalendar.MONTH, mesActual);
+		// SimpleDateFormat df = new SimpleDateFormat(
+		// "dd/MMM/yyyy", new Locale("en_EN"));
+		return df.format(gc.getTime());
+	}
+
+	public boolean validarFechaAnterior(Date fecha) {
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(fecha);
+		int mesActual = gc.get(GregorianCalendar.MONTH);
+		if (mesActual == GregorianCalendar.FEBRUARY) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private double calcularCuota(int valor, double interes, int meses) {
+
+		return valor * ((interes * Math.pow((1 + interes), meses)) / (Math.pow((1 + interes), meses) - 1));
+	}
+
+	public String formateaDouble(double numero) {
+		BigDecimal trans = new BigDecimal(numero);
+		return trans.toString();
+	}
+
+	public String incrementarMesFecha(Date fecha) {
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(fecha);
+		int mesActual = gc.get(GregorianCalendar.MONTH);
+		int diaActual = gc.get(GregorianCalendar.DATE);
+		if (mesActual == GregorianCalendar.DECEMBER) {
+			mesActual = GregorianCalendar.JANUARY;
+			gc.set(GregorianCalendar.YEAR, gc.get(GregorianCalendar.YEAR) + 1);
+		} else if (mesActual == GregorianCalendar.JANUARY && gc.get(GregorianCalendar.DATE) > 28) {
+			mesActual++;
+			if (esBisiesto(gc.get(GregorianCalendar.YEAR) + "")) {
+				gc.set(GregorianCalendar.DATE, 29);
+			} else {
+				gc.set(GregorianCalendar.DATE, 28);
+			}
+		} else if (diaActual == 31 && (mesActual == GregorianCalendar.MARCH || mesActual == GregorianCalendar.MAY
+				|| mesActual == GregorianCalendar.AUGUST || mesActual == GregorianCalendar.OCTOBER)) {
+			gc.set(GregorianCalendar.DATE, 30);
+			mesActual++;
+		} else {
+			mesActual++;
+		}
+		gc.set(GregorianCalendar.MONTH, mesActual);
+		// SimpleDateFormat df = new SimpleDateFormat(
+		// "dd/MMM/yyyy", new Locale("en_EN"));
+		return df.format(gc.getTime());
+	}
+
+	public boolean esBisiesto(String anio) {
+		boolean BISIESTO;
+		if (Integer.parseInt(anio) % 4 == 0) {
+			if (Integer.parseInt(anio) % 100 == 0) {
+				if (Integer.parseInt(anio) % 400 == 0) {
+					BISIESTO = true;
+				} else {
+					BISIESTO = false;
+				}
+			} else {
+				BISIESTO = true;
+			}
+		} else
+			BISIESTO = false;
+
+		return BISIESTO;
+	}
+
+	public String quitarpunto(String dato) {
+		String dato2 = "";
+		for (int i = 0; i < dato.length(); i++) {
+			char b = dato.charAt(i);
+			if (i == '.') {
+				System.out.println("quito puntos");
+			} else {
+				dato2 += dato.charAt(i);
+			}
+		}
+		return dato2;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void generarReportePreliquidacion() throws Exception {
+
+		if (valorCuotaMostrar != null) {
+
+			if (mBUsuario == null) {
+
+				mBUsuario = (MBUsuario) UtilidadesWeb.getManagedBean("MBUsuario");
+
+			}
+
+			ParametrosWeb param = (ParametrosWeb) UtilidadesWeb.getManagedBean("Parametros");
+			@SuppressWarnings("rawtypes")
+			HashMap parametros = new HashMap();
+			parametros.put("CEDULA", cedulaGirador);
+			parametros.put("NOMBRE", nombre);
+			parametros.put("VALORCOMPRA", valorLiquidar);
+			parametros.put("PLAZO", plazoMeses);
+			parametros.put("INTERES", tempPagareTasaInteres.getValor());
+			parametros.put("TOTALFINANCIAR", ponerPuntos(valorTotalFinanciar));
+
+			// BigDecimal x= (new BigDecimal(valorCuotaMostrar.replace(".", ""))).add(new
+			// BigDecimal("11900"));
+
+			parametros.put("VALORCUOTA", valorCuotaMostrar);
+
+			parametros.put("ESTUDIO", estudioCredito);
+
+			String usurRegistrar = "";
+
+			if (mBUsuario == null) {
+
+				mBUsuario = (MBUsuario) UtilidadesWeb.getManagedBean("MBUsuario");
+			}
+
+			usurRegistrar = mBUsuario.getUsuario().getUserId();
+
+			parametros.put("OPERADOR", usurRegistrar);// BIEN*/
+
+			GenerarReportes.generarReporte9(FacesContext.getCurrentInstance(), "1", Parametros.FORMATO_PDF, parametros,
+					param.getCONTEXTO_APP(), Parametros.RUTA_JASPER, Parametros.RUTA_PDF, Parametros.RUTA_IMG);
+
+		} else {
+
+			mensajes.mostrarMensaje("Debe liquidar primero para descargar la liquidación.", 2);
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public void generarReporteliquidacion() throws Exception {
+
+		TpagareMaestroLiquidacion consultaCodigo = dNConsultasFena.buscarNumeroAprobacion(numeroAprobacion);
+		if (consultaCodigo != null) {
+
+			if (mBUsuario == null) {
+
+				mBUsuario = (MBUsuario) UtilidadesWeb.getManagedBean("MBUsuario");
+
+			}
+
+			ParametrosWeb param = (ParametrosWeb) UtilidadesWeb.getManagedBean("Parametros");
+			@SuppressWarnings("rawtypes")
+			HashMap parametros = new HashMap();
+			parametros.put("NOAUTORIZACION", numeroAprobacion);
+
+			String usurRegistrar = "";
+
+			if (mBUsuario == null) {
+
+				mBUsuario = (MBUsuario) UtilidadesWeb.getManagedBean("MBUsuario");
+			}
+
+			usurRegistrar = mBUsuario.getUsuario().getUserId();
+
+			parametros.put("OPERADOR", usurRegistrar);// BIEN*/
+
+			GenerarReportes.generarReporte8(FacesContext.getCurrentInstance(), "1", Parametros.FORMATO_PDF, parametros,
+					param.getCONTEXTO_APP(), Parametros.RUTA_JASPER, Parametros.RUTA_PDF, Parametros.RUTA_IMG);
+		} else {
+
+			mensajes.mostrarMensaje("El número de aprobación no esta registrado.", 2);
+		}
+
+	}
+
+	public String ponerPuntos(String numeroconpuntos) {
+		int cont = 0;
+		String cadenanueva = "";
+		String cadenanueva2 = "";
+		String cadenanueva3 = "";
+
+		for (int x = numeroconpuntos.length() - 1; x >= 0; x--) {
+			char b = numeroconpuntos.charAt(x);
+			cont++;
+			cadenanueva += numeroconpuntos.charAt(x);
+			if (cont == 3) {
+				cadenanueva += ".";
+				cont = 0;
+			}
+		}
+
+		for (int x = cadenanueva.length() - 1; x >= 0; x--) {
+			char b = cadenanueva.charAt(x);
+			cadenanueva2 += cadenanueva.charAt(x);
+		}
+
+		for (int i = 0; i < cadenanueva2.length(); i++) {
+			char b = cadenanueva2.charAt(i);
+			if (i == 0) {
+				if (b == '.') {
+					cadenanueva3 = quitarpuntoinicion(cadenanueva2);
+					break;
+				} else {
+					cadenanueva3 = cadenanueva2;
+					break;
+				}
+			} else {
+				cadenanueva3 = cadenanueva2;
+				break;
+			}
+		}
+		return cadenanueva3;
+	}
+
+	public String quitarpuntoinicion(String dato) {
+		String dato2 = "";
+		for (int i = 0; i < dato.length(); i++) {
+			char b = dato.charAt(i);
+			if (i == 0) {
+				if (b == '.') {
+				}
+			} else {
+				dato2 += dato.charAt(i);
+			}
+		}
+		return dato2;
+	}
+
+	public String getCodigoAfiliado() {
+		return codigoAfiliado;
+	}
+
+	public void setCodigoAfiliado(String codigoAfiliado) {
+		this.codigoAfiliado = codigoAfiliado;
+	}
+
+	public TProductosFinanciero getTtProductosFinanciero() {
+		return ttProductosFinanciero;
+	}
+
+	public void setTtProductosFinanciero(TProductosFinanciero ttProductosFinanciero) {
+		this.ttProductosFinanciero = ttProductosFinanciero;
+	}
+
+	public String getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(String fecha) {
+		this.fecha = fecha;
+	}
+
+	public String getFechaPrimeraCuota() {
+		return fechaPrimeraCuota;
+	}
+
+	public void setFechaPrimeraCuota(String fechaPrimeraCuota) {
+		this.fechaPrimeraCuota = fechaPrimeraCuota;
+	}
+
+	public String getCedulaGirador() {
+		return cedulaGirador;
+	}
+
+	public void setCedulaGirador(String cedulaGirador) {
+		this.cedulaGirador = cedulaGirador;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getSemestre() {
+		return semestre;
+	}
+
+	public void setSemestre(String semestre) {
+		this.semestre = semestre;
+	}
+
+	public String getPrograma() {
+		return programa;
+	}
+
+	public void setPrograma(String programa) {
+		this.programa = programa;
+	}
+
+	public String getReferencia() {
+		return referencia;
+	}
+
+	public void setReferencia(String referencia) {
+		this.referencia = referencia;
+	}
+
+	public String getPeriodo() {
+		return periodo;
+	}
+
+	public void setPeriodo(String periodo) {
+		this.periodo = periodo;
+	}
+
+	public String getValorLiquidar() {
+		return valorLiquidar;
+	}
+
+	public void setValorLiquidar(String valorLiquidar) {
+		this.valorLiquidar = valorLiquidar;
+	}
+
+	public String getPlazoMeses() {
+		return plazoMeses;
+	}
+
+	public void setPlazoMeses(String plazoMeses) {
+		this.plazoMeses = plazoMeses;
+	}
+
+	public String getNombreApp() {
+		return nombreApp;
+	}
+
+	public void setNombreApp(String nombreApp) {
+		this.nombreApp = nombreApp;
+	}
+
+	public VOAfiliado getAfiliadoConsultado() {
+		return afiliadoConsultado;
+	}
+
+	public void setAfiliadoConsultado(VOAfiliado afiliadoConsultado) {
+		this.afiliadoConsultado = afiliadoConsultado;
+	}
+
+	public TpagareTasaInteres getTempPagareTasaInteres() {
+		return tempPagareTasaInteres;
+	}
+
+	public void setTempPagareTasaInteres(TpagareTasaInteres tempPagareTasaInteres) {
+		this.tempPagareTasaInteres = tempPagareTasaInteres;
+	}
+
+	public TatComisionFenalcheque getTempComisionFenalcheque() {
+		return tempComisionFenalcheque;
+	}
+
+	public void setTempComisionFenalcheque(TatComisionFenalcheque tempComisionFenalcheque) {
+		this.tempComisionFenalcheque = tempComisionFenalcheque;
+	}
+
+	public String getValorCuotaMostrar() {
+		return valorCuotaMostrar;
+	}
+
+	public void setValorCuotaMostrar(String valorCuotaMostrar) {
+		this.valorCuotaMostrar = valorCuotaMostrar;
+	}
+
+	public String getValorTotalFinanciar() {
+		return valorTotalFinanciar;
+	}
+
+	public void setValorTotalFinanciar(String valorTotalFinanciar) {
+		this.valorTotalFinanciar = valorTotalFinanciar;
+	}
+
+	public String getEstudioCredito() {
+		return estudioCredito;
+	}
+
+	public void setEstudioCredito(String estudioCredito) {
+		this.estudioCredito = estudioCredito;
+	}
+
+	public VOAprobacion getVoAprobacion() {
+		return voAprobacion;
+	}
+
+	public void setVoAprobacion(VOAprobacion voAprobacion) {
+		this.voAprobacion = voAprobacion;
+	}
+
+	public String getNumeroAprobacion() {
+		return numeroAprobacion;
+	}
+
+	public void setNumeroAprobacion(String numeroAprobacion) {
+		this.numeroAprobacion = numeroAprobacion;
+	}
+
+	public boolean isPanelAprobacion() {
+		return panelAprobacion;
+	}
+
+	public void setPanelAprobacion(boolean panelAprobacion) {
+		this.panelAprobacion = panelAprobacion;
+	}
+
+	public List<VODetalleAprobacion> getListaDetalleAprobacion() {
+		return listaDetalleAprobacion;
+	}
+
+	public void setListaDetalleAprobacion(List<VODetalleAprobacion> listaDetalleAprobacion) {
+		this.listaDetalleAprobacion = listaDetalleAprobacion;
+	}
+
+	public MaestroCuotasVO getMaestroCuotasVO() {
+		return maestroCuotasVO;
+	}
+
+	public void setMaestroCuotasVO(MaestroCuotasVO maestroCuotasVO) {
+		this.maestroCuotasVO = maestroCuotasVO;
+	}
+
+	public String getTipoLiquidacionSeleccionado() {
+		return tipoLiquidacionSeleccionado;
+	}
+
+	public void setTipoLiquidacionSeleccionado(String tipoLiquidacionSeleccionado) {
+		this.tipoLiquidacionSeleccionado = tipoLiquidacionSeleccionado;
+	}
+
+	public boolean isCodigoBarras() {
+		return codigoBarras;
+	}
+
+	public String getTextoCodigoBarras() {
+		return textoCodigoBarras;
+	}
+
+	public void setTextoCodigoBarras(String textoCodigoBarras) {
+		this.textoCodigoBarras = textoCodigoBarras;
+	}
+
+	public void setCodigoBarras(boolean codigoBarras) {
+		this.codigoBarras = codigoBarras;
+	}
+
+
+
+
+	public MBMensajes getMensajes() {
+		return mensajes;
+	}
+
+
+
+
+	public void setMensajes(MBMensajes mensajes) {
+		this.mensajes = mensajes;
+	}
+
+
+
+
+	public DNConsultasOpencard getdNConsultasOpencard() {
+		return dNConsultasOpencard;
+	}
+
+
+
+
+	public void setdNConsultasOpencard(DNConsultasOpencard dNConsultasOpencard) {
+		this.dNConsultasOpencard = dNConsultasOpencard;
+	}
+
+
+
+
+	public DNConsultasAS400 getdNConsultasAS400() {
+		return dNConsultasAS400;
+	}
+
+
+
+
+	public void setdNConsultasAS400(DNConsultasAS400 dNConsultasAS400) {
+		this.dNConsultasAS400 = dNConsultasAS400;
+	}
+
+
+
+
+	public DNConsultasFena getdNConsultasFena() {
+		return dNConsultasFena;
+	}
+
+
+
+
+	public void setdNConsultasFena(DNConsultasFena dNConsultasFena) {
+		this.dNConsultasFena = dNConsultasFena;
+	}
+
+
+
+
+	public MBUsuario getmBUsuario() {
+		return mBUsuario;
+	}
+
+
+
+
+	public void setmBUsuario(MBUsuario mBUsuario) {
+		this.mBUsuario = mBUsuario;
+	}
+
+
+
+
+	public SimpleDateFormat getDf() {
+		return df;
+	}
+
+
+
+
+	public void setDf(SimpleDateFormat df) {
+		this.df = df;
+	}
+
+
+
+
+	public String getIdSolicitudBpm() {
+		return idSolicitudBpm;
+	}
+
+
+
+
+	public void setIdSolicitudBpm(String idSolicitudBpm) {
+		this.idSolicitudBpm = idSolicitudBpm;
+	}
+
+
+
+
+	public String getStrUsuarioBpm() {
+		return strUsuarioBpm;
+	}
+
+
+
+
+	public void setStrUsuarioBpm(String strUsuarioBpm) {
+		this.strUsuarioBpm = strUsuarioBpm;
+	}
+
+
+
+
+	public String getTareaBPM() {
+		return tareaBPM;
+	}
+
+
+
+
+	public void setTareaBPM(String tareaBPM) {
+		this.tareaBPM = tareaBPM;
+	}
+
+
+
+
+	public String getUrlProcesoBPM() {
+		return urlProcesoBPM;
+	}
+
+
+
+
+	public void setUrlProcesoBPM(String urlProcesoBPM) {
+		this.urlProcesoBPM = urlProcesoBPM;
+	}
+
+
+
+
+
+
+
+
+	
+
+
+
+	public String getCodigoAfiliadoLiquidadorBPM() {
+		return codigoAfiliadoLiquidadorBPM;
+	}
+
+
+
+
+	public void setCodigoAfiliadoLiquidadorBPM(String codigoAfiliadoLiquidadorBPM) {
+		this.codigoAfiliadoLiquidadorBPM = codigoAfiliadoLiquidadorBPM;
+	}
+
+
+
+
+
+
+
+	public boolean isFinalizar() {
+		return finalizar;
+	}
+
+
+
+
+	public void setFinalizar(boolean finalizar) {
+		this.finalizar = finalizar;
+	}
+
+
+
+
+	public boolean isRegresarbpm() {
+		return regresarbpm;
+	}
+
+
+
+
+	public void setRegresarbpm(boolean regresarbpm) {
+		this.regresarbpm = regresarbpm;
+	}
+
+
+
+
+	public boolean isBpm() {
+		return bpm;
+	}
+
+
+
+
+	public void setBpm(boolean bpm) {
+		this.bpm = bpm;
+	}
+
+
+
+
+	public String getCodigoDeAprobacion() {
+		return codigoDeAprobacion;
+	}
+
+
+
+
+	public boolean isPanelAprobacionB() {
+		return panelAprobacionB;
+	}
+
+
+
+
+	public void setPanelAprobacionB(boolean panelAprobacionB) {
+		this.panelAprobacionB = panelAprobacionB;
+	}
+
+
+
+
+	public TsolicSolicitud getTsolicSolicitudEntity() {
+		return tsolicSolicitudEntity;
+	}
+
+
+
+
+	public void setTsolicSolicitudEntity(TsolicSolicitud tsolicSolicitudEntity) {
+		this.tsolicSolicitudEntity = tsolicSolicitudEntity;
+	}
+
+
+
+
+	public void setCodigoDeAprobacion(String codigoDeAprobacion) {
+		this.codigoDeAprobacion = codigoDeAprobacion;
+	}
+
+
+
+
+	public String getMensajeRespuestaPagare() {
+		return mensajeRespuestaPagare;
+	}
+
+
+
+
+	public void setMensajeRespuestaPagare(String mensajeRespuestaPagare) {
+		this.mensajeRespuestaPagare = mensajeRespuestaPagare;
+	}
+
+
+
+
+	public boolean isBotonFinalizar() {
+		return botonFinalizar;
+	}
+
+
+
+
+	public void setBotonFinalizar(boolean botonFinalizar) {
+		this.botonFinalizar = botonFinalizar;
+	}
+	
+	
+
+}

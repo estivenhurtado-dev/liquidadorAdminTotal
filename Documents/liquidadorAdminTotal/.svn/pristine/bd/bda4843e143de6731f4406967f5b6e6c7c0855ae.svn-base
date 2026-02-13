@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<h:outputStylesheet library="css" name="default.css" />
+	<h:outputScript library="js" name="validaciones.js" />
+
+
+
+
+
+
+
+</h:head>
+<h:body>
+	<h:form id="form1">
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage library="images" name="ajax-loader.gif" />
+			</p:dialog>
+
+
+		<div align="center">
+
+			<p:growl id="messages1" sticky="true" />
+			<p:panel style="width: 1000px;" header="Aprobación"
+				id="formularioingreso">
+
+				<h:panelGrid columns="4" cellpadding="10">
+					<h:outputText style="background-color: none; " value="Aprobación :" />
+					<p:inputText style="width: 200px;" id="dato00" maxlength="12"
+						onkeyup="javascript:this.value = stripNonNumeric(this.value);"
+						value="#{MBLiquidacionPre.numeroAprobacion}">
+					</p:inputText>
+
+					<p:commandButton value="Buscar" update="messages1,form1"
+						action="#{MBLiquidacionPre.consultarAprobacion}"
+						styleClass="btn btn-green" id="Buscar2">
+					</p:commandButton>
+					<p:commandButton value="Atras" onstart="PF('statusDialog').show();  "
+					oncomplete="PF('statusDialog').hide();"
+						update="messages1,form1,tablaDesembolsos"
+						action="#{MBLiquidacionPre.regresarLiquidar}"
+						styleClass="btn btn-blue" id="Buscar">
+					</p:commandButton>
+
+				</h:panelGrid>
+				<h:panelGrid rendered="#{MBLiquidacionPre.panelAprobacion}"
+					id="consul" columns="2" cellpadding="4">
+
+					<h:outputText style="background-color: none; "
+						value="Cedula Girador :" />
+					<h:outputText style="background-color: none; width: 350px;"
+						value="#{MBLiquidacionPre.voAprobacion.cedulaGirador}" />
+					<h:outputText style="background-color: none; "
+						value="Establecimiento :" />
+					<h:outputText style="background-color: none; width: 350px;"
+						value="#{MBLiquidacionPre.voAprobacion.establecimiento}" />
+					<h:outputText style="background-color: none; "
+						value="Nombre Girador :" />
+					<h:outputText style="background-color: none; width: 350px;"
+						value="#{MBLiquidacionPre.voAprobacion.nombreGirador}" />
+					<h:outputText style="background-color: none; " value="Direccion :" />
+					<h:outputText style="background-color: none; width: 350px;"
+						value="#{MBLiquidacionPre.voAprobacion.direccion}" />
+					<h:outputText style="background-color: none; " value="Teléfono :" />
+					<h:outputText style="background-color: none; width: 350px;"
+						value="#{MBLiquidacionPre.voAprobacion.telefono1}" />
+					<h:outputText style="background-color: none; " value="Fecha :" />
+					<h:outputText style="background-color: none; width: 350px;"
+						value="#{MBLiquidacionPre.voAprobacion.fecha}" />
+
+					<h:outputText style="background-color: none; "
+						value="Cedula Codeudor :" />
+					<h:outputText style="background-color: none; width: 350px;"
+						value="#{MBLiquidacionPre.voAprobacion.cedulaCodeudor}" />
+
+					<h:outputText style="background-color: none; "
+						value="Nombre Codeudor :" />
+					<h:outputText style="background-color: none; width: 350px;"
+						value="#{MBLiquidacionPre.voAprobacion.nombreCodeudor}" />
+					<h:outputText style="background-color: none; "
+						value="Direccion Codeudor:" />
+					<h:outputText style="background-color: none; width: 350px;"
+						value="#{MBLiquidacionPre.voAprobacion.direccionCodeudor}" />
+					<h:outputText style="background-color: none; "
+						value="Teléfono Codeudor :" />
+					<h:outputText style="background-color: none; width: 350px;"
+						value="#{MBLiquidacionPre.voAprobacion.telefonoCodeudor1}" />
+
+
+				</h:panelGrid>
+				<br></br>
+				<p:dataTable rendered="#{MBLiquidacionPre.panelAprobacion}"
+					id="tablaDesembolsos" var="negocios"
+					value="#{MBLiquidacionPre.listaDetalleAprobacion}">
+
+
+					<p:column headerText="Nmero Cuota">
+						<h:outputText value="#{negocios.noCuota}" />
+					</p:column>
+
+					<p:column headerText="Numero Pagare">
+						<h:outputText value="#{negocios.noPagare}" />
+					</p:column>
+
+					<p:column headerText="Fecha">
+						<h:outputText value="#{negocios.fecha}" />
+					</p:column>
+					<p:column headerText="Valor Financiado">
+						<h:outputText value="#{negocios.valor}" />
+					</p:column>
+
+
+				</p:dataTable>
+				<br></br>
+
+				<h:panelGrid rendered="#{MBLiquidacionPre.panelAprobacion}"
+					id="pieapro" columns="2" cellpadding="4">
+					<p:commandButton value="Aprobar Liquidación" onstart="PF('statusDialog').show();  "
+					oncomplete="PF('statusDialog').hide();"
+						update="messages1,form1"
+						action="#{MBLiquidacionPre.aprobarLiquidacion}"
+						styleClass="btn btn-green" id="AprobarL">
+					</p:commandButton>
+
+				</h:panelGrid>
+
+				<br></br>
+					<h:panelGrid rendered="#{MBLiquidacionPre.panelAprobacion}"
+					id="pieaproRepo" columns="2" cellpadding="4">
+					<p:commandButton value="Archivo Detallado Aprobado"
+						style="width: 180px;" ajax="false"
+						action="#{MBLiquidacionPre.generarReporteliquidacion}"
+						styleClass="btn btn-green" id="ArchivoDetalladoApro">
+					</p:commandButton>
+
+				</h:panelGrid>
+
+
+
+
+
+
+
+			</p:panel>
+
+
+		</div>
+	</h:form>
+</h:body>
+</html>
+
